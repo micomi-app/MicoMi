@@ -1,16 +1,11 @@
-# micomi
+# MicoMi
 
-A new Flutter project.
+ToDoの入力から予定表を生成するアプリ。
 
-## Getting Started
+## タスク
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- UIデザイン
+- ToDo入力画面の作成
+- 予定表画面の作成
+- 通知機能の作成
+- 最大何日かけるかパラメータ・面倒度パラメータでの予定表調整機能の作成
