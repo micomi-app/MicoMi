@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:vibration/vibration.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(const MyApp()));
@@ -14,17 +15,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MicoMi',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-        ),
+        primaryColor: Colors.lightBlue,
         brightness: Brightness.light,
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
-          brightness: Brightness.dark,
-        ),
+        primaryColor: Colors.green,
+        brightness: Brightness.dark,
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
@@ -39,14 +36,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePage> createState() => CalendarPage();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  void makeTask() {
-    // TODO
-  }
-
+class CalendarPage extends State<MyHomePage> {
   DateTime? _selectedDay;
   DateTime _focusedDay = DateTime.now();
 
@@ -54,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).primaryColor,
         title: Text(widget.title),
       ),
       body: Column(
@@ -65,6 +58,29 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 20,
           ),
           TableCalendar(
+            calendarBuilders: CalendarBuilders(
+              selectedBuilder: (context, day, focusedDay) {
+                return Center(
+                  child: Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    alignment: const Alignment(0.0, 0.0),
+                    child: Text(day.day.toString()),
+                  )
+                );
+              }
+            ),
+            calendarStyle: const CalendarStyle(
+                isTodayHighlighted: false,
+            ),
+            headerStyle: const HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+            ),
             firstDay: DateTime.utc(2010, 1, 1),
             lastDay: DateTime.utc(9999, 12, 31),
             focusedDay: _focusedDay,
@@ -81,10 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: makeTask,
-        tooltip: "タスクを追加",
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: () {
+          Vibration.vibrate(duration: 20);
+          // TODO
+        },
+        label: const Text("タスクを追加"),
+        icon: const Icon(Icons.add),
       ),
     );
   }
