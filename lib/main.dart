@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'MicoMi',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
+          seedColor: Colors.blue,
         ),
         brightness: Brightness.light,
         useMaterial3: true,
@@ -42,6 +42,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  void makeTask() {
+    // TODO
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,17 +53,24 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TableCalendar(
-              firstDay: DateTime.utc(2010, 1, 1),
-              lastDay: DateTime.utc(9999, 12, 31),
-              focusedDay: DateTime.now(),
-            )
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          const SizedBox(
+            width: 100,
+            height: 20,
+          ),
+          TableCalendar(
+            firstDay: DateTime.utc(2010, 1, 1),
+            lastDay: DateTime.utc(9999, 12, 31),
+            focusedDay: DateTime.now(),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: makeTask,
+        tooltip: "タスクを追加",
+        child: const Icon(Icons.add),
       ),
     );
   }
