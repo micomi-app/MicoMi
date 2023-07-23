@@ -53,13 +53,16 @@ class CalendarPage extends State<MyHomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+          // 余白
           const SizedBox(
             width: 100,
             height: 20,
           ),
+          // カレンダー
           TableCalendar(
             calendarBuilders: CalendarBuilders(
               selectedBuilder: (context, day, focusedDay) {
+                // 日付フォーカス時のマークに相当するウィジェットを返す関数
                 return Center(
                   child: Container(
                     width: 70,
@@ -89,6 +92,8 @@ class CalendarPage extends State<MyHomePage> {
               return isSameDay(_selectedDay, day);
             },
             onDaySelected: (selectedDay, focusedDay) {
+              Vibration.vibrate(duration: 10);
+              // TODO:タスク一覧表示の作成
               setState(() {
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay; // update `_focusedDay` here as well
@@ -97,11 +102,13 @@ class CalendarPage extends State<MyHomePage> {
           ),
         ],
       ),
+
+      // タスク追加ボタン
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           Vibration.vibrate(duration: 20);
-          // TODO
+          // TODO: タスク追加の作成
         },
         label: const Text("タスクを追加"),
         icon: const Icon(Icons.add),
