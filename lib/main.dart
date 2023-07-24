@@ -19,11 +19,13 @@ class MicoMiMain extends StatelessWidget {
         primaryColor: const Color(0xff8daeb8),
         brightness: Brightness.light,
         useMaterial3: true,
+        fontFamily: "Noto Sans JP",
       ),
       darkTheme: ThemeData(
         primaryColor: const Color(0xff4e7682),
         brightness: Brightness.dark,
         useMaterial3: true,
+        fontFamily: "Noto Sans JP",
       ),
       themeMode: ThemeMode.system,
       home: const MicoMiMainPage(title: 'MicoMi'),
@@ -48,6 +50,7 @@ class CalendarPage extends State<MicoMiMainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(widget.title),
       ),

@@ -11,15 +11,18 @@ class AddTask extends StatelessWidget {
           primaryColor: const Color(0xff8daeb8),
           brightness: Brightness.light,
           useMaterial3: true,
+          fontFamily: "Noto Sans JP"
         ),
         darkTheme: ThemeData(
           primaryColor: const Color(0xff4e7682),
           brightness: Brightness.dark,
           useMaterial3: true,
+            fontFamily: "Noto Sans JP"
         ),
         themeMode: ThemeMode.system,
         home: Scaffold(
           appBar: AppBar(
+            centerTitle: true,
             backgroundColor: Theme.of(context).primaryColor,
             title: const Text("タスクの追加"),
           ),
