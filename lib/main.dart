@@ -15,12 +15,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MicoMi',
       theme: ThemeData(
-        primaryColor: Colors.lightBlue,
+        primaryColor: const Color(0xff8daeb8),
         brightness: Brightness.light,
         useMaterial3: true,
       ),
       darkTheme: ThemeData(
-        primaryColor: Colors.green,
+        primaryColor: const Color(0xff4e7682),
         brightness: Brightness.dark,
         useMaterial3: true,
       ),
@@ -65,8 +65,8 @@ class CalendarPage extends State<MyHomePage> {
                 // 日付フォーカス時のマークに相当するウィジェットを返す関数
                 return Center(
                   child: Container(
-                    width: 70,
-                    height: 70,
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Theme.of(context).primaryColor,
