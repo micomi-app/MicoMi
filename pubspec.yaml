@@ -64,6 +64,7 @@ flutter:
     - family: Noto Sans JP
       fonts:
         - asset: fonts/NotoSansJP-Regular.ttf
+        - asset: fonts/NotoSansJP-Bold.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

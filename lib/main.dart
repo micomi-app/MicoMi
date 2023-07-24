@@ -116,7 +116,12 @@ class CalendarPage extends State<MicoMiMainPage> {
             builder: (context) => const AddTask(),
           ));
         },
-        label: const Text("タスクを追加"),
+        label: Text(
+          "タスクを追加",
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyMedium!.color,
+          ),
+        ),
         icon: const Icon(Icons.add),
       ),
     );
