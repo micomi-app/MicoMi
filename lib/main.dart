@@ -3,6 +3,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vibration/vibration.dart';
 import 'add_task.dart';
+import 'custom_material_app.dart';
+import 'custom_widgets.dart';
 
 void main() {
   initializeDateFormatting().then((_) => runApp(const MicoMiMain()));
@@ -13,22 +15,9 @@ class MicoMiMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const CustomMaterialApp(
       title: 'MicoMi',
-      theme: ThemeData(
-        primaryColor: const Color(0xff8daeb8),
-        brightness: Brightness.light,
-        useMaterial3: true,
-        fontFamily: "Noto Sans JP",
-      ),
-      darkTheme: ThemeData(
-        primaryColor: const Color(0xff4e7682),
-        brightness: Brightness.dark,
-        useMaterial3: true,
-        fontFamily: "Noto Sans JP",
-      ),
-      themeMode: ThemeMode.system,
-      home: const MicoMiMainPage(title: 'MicoMi'),
+      home: MicoMiMainPage(title: 'MicoMi'),
     );
   }
 }
@@ -57,11 +46,7 @@ class CalendarPage extends State<MicoMiMainPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          // 余白
-          const SizedBox(
-            width: 100,
-            height: 20,
-          ),
+          const CustomPadding(height: 20),
           // カレンダー
           TableCalendar(
             calendarBuilders: CalendarBuilders(
