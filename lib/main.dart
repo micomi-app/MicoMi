@@ -97,7 +97,7 @@ class CalendarPage extends State<MicoMiMainPage> {
               // TODO:タスク一覧表示の作成
               setState(() {
                 _selectedDay = selectedDay;
-                _focusedDay = focusedDay; // update `_focusedDay` here as well
+                _focusedDay = focusedDay;
               });
             },
           ),
