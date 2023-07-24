@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vibration/vibration.dart';
+import 'add_task.dart';
 
 void main() {
-  initializeDateFormatting().then((_) => runApp(const MyApp()));
+  initializeDateFormatting().then((_) => runApp(const MicoMiMain()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MicoMiMain extends StatelessWidget {
+  const MicoMiMain({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +26,21 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.system,
-      home: const MyHomePage(title: 'MicoMi'),
+      home: const MicoMiMainPage(title: 'MicoMi'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class MicoMiMainPage extends StatefulWidget {
+  const MicoMiMainPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => CalendarPage();
+  State<MicoMiMainPage> createState() => CalendarPage();
 }
 
-class CalendarPage extends State<MyHomePage> {
+class CalendarPage extends State<MicoMiMainPage> {
   DateTime? _selectedDay;
   DateTime _focusedDay = DateTime.now();
 
@@ -108,7 +109,9 @@ class CalendarPage extends State<MyHomePage> {
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: () {
           Vibration.vibrate(duration: 20);
-          // TODO: タスク追加の作成
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => const AddTask(),
+          ));
         },
         label: const Text("タスクを追加"),
         icon: const Icon(Icons.add),
