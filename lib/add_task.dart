@@ -43,6 +43,7 @@ class AddTask extends State<MicoMiSubPage> {
         return Theme(
           data: ThemeData(
             colorScheme: Theme.of(context).colorScheme,
+            useMaterial3: true,
           ),
           child: child!,
         );
@@ -66,6 +67,7 @@ class AddTask extends State<MicoMiSubPage> {
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Theme.of(context).colorScheme.onPrimary,
           title: const Text("タスクの追加"),
         ),
         body: Center(

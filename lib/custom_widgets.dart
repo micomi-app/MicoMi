@@ -36,12 +36,12 @@ class CustomTextField extends StatelessWidget {
           enabledBorder: isUnderline
               ? UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 )
               : OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
           focusedBorder: isUnderline

@@ -41,6 +41,7 @@ class CalendarPage extends State<MicoMiMainPage> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         title: Text(widget.title),
       ),
       body: SingleChildScrollView(
@@ -83,7 +84,13 @@ class CalendarPage extends State<MicoMiMainPage> {
                         color: Theme.of(context).primaryColor,
                       ),
                       alignment: const Alignment(0.0, 0.0),
-                      child: Text(day.day.toString()),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -114,20 +121,14 @@ class CalendarPage extends State<MicoMiMainPage> {
 
       // タスク追加ボタン
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Theme.of(context).textTheme.bodyMedium!.color,
+        foregroundColor: Theme.of(context).colorScheme.onPrimary,
         onPressed: () {
           Vibration.vibrate(duration: 20);
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const MicoMiSubPage(title: "タスクの追加");
           }));
         },
-        label: Text(
-          "タスクを追加",
-          style: TextStyle(
-            color: Theme.of(context).textTheme.bodyMedium!.color,
-          ),
-        ),
+        label: const Text("タスクを追加"),
         icon: const Icon(Icons.add),
       ),
     );

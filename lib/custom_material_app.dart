@@ -13,9 +13,17 @@ class CustomMaterialApp extends StatelessWidget {
       title: title,
       theme: ThemeData(
         primaryColor: const Color(0xff8daeb8),
-        colorScheme: const ColorScheme.light(
-          primary: Color(0xff8daeb8),
-          secondary: Color(0xff4e7682),
+        colorScheme: ColorScheme.light(
+          primary: const Color(0xff8daeb8),
+          secondary: const Color(0xff8daeb8).withOpacity(0.5),
+          onPrimary: Colors.white,
+          onSecondary: Colors.white,
+        ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          ),
         ),
         brightness: Brightness.light,
         useMaterial3: true,
@@ -23,9 +31,17 @@ class CustomMaterialApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         primaryColor: const Color(0xff4e7682),
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xff4e7682),
-          secondary: Color(0xff8daeb8),
+        colorScheme: ColorScheme.dark(
+          primary: const Color(0xff4e7682),
+          secondary: const Color(0xff4e7682).withOpacity(0.5),
+          onPrimary: Colors.white,
+          onSecondary: Colors.white,
+        ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+          ),
         ),
         brightness: Brightness.dark,
         useMaterial3: true,
