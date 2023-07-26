@@ -1,36 +1,68 @@
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
-  const CustomTextField({super.key, required this.hintText});
+  const CustomTextField({
+    super.key,
+    required this.hintText,
+    this.isMultiline,
+    this.autoFocus,
+    this.textStyle,
+    this.isTextAlignCenter,
+    required this.isUnderline,
+  });
 
   final String hintText;
+  final TextStyle? textStyle;
+  final bool? isMultiline;
+  final bool? autoFocus;
+  final bool? isTextAlignCenter;
+  final bool isUnderline;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: 300,
-        child: TextField(
-          autofocus: true,
-          decoration: InputDecoration(
-              hintText: hintText,
-              enabledBorder: UnderlineInputBorder(
+      width: 300,
+      child: TextField(
+        textAlign:
+            isTextAlignCenter == true ? TextAlign.center : TextAlign.start,
+        autofocus: autoFocus == true,
+        keyboardType: isMultiline == true ? TextInputType.multiline : null,
+        maxLines: isMultiline == true ? null : 1,
+        style: textStyle,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: textStyle,
+          contentPadding: const EdgeInsets.all(10),
+          enabledBorder: isUnderline
+              ? UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                  ),
+                )
+              : OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                  ),
+                ),
+          focusedBorder: isUnderline
+              ? UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: Theme.of(context).primaryColor,
-                  )
-              ),
-              focusedBorder: UnderlineInputBorder(
+                  ),
+                )
+              : OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Theme.of(context).primaryColor,
-                  )
-              )
-          ),
-        )
+                  ),
+                ),
+        ),
+      ),
     );
   }
 }
 
-class CustomPadding extends StatelessWidget {
-  const CustomPadding({super.key, required this.height});
+class CustomMargin extends StatelessWidget {
+  const CustomMargin({super.key, required this.height});
 
   final double height;
 
@@ -39,6 +71,43 @@ class CustomPadding extends StatelessWidget {
     return SizedBox(
       width: 100,
       height: height,
+    );
+  }
+}
+
+class CustomElevatedButton extends StatelessWidget {
+  const CustomElevatedButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    required this.isPrimary,
+    this.width,
+    required this.isRoundedSquare,
+  });
+
+  final String label;
+  final bool isPrimary;
+  final bool isRoundedSquare;
+  final double? width;
+  final void Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isPrimary ? Theme.of(context).primaryColor : null,
+          foregroundColor: Theme.of(context).textTheme.bodyMedium!.color,
+          shape: isRoundedSquare
+              ? RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                )
+              : null,
+        ),
+        child: Text(label),
+      ),
     );
   }
 }

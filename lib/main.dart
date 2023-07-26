@@ -43,63 +43,84 @@ class CalendarPage extends State<MicoMiMainPage> {
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(widget.title),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          const CustomPadding(height: 20),
-          // カレンダー
-          TableCalendar(
-            calendarBuilders: CalendarBuilders(
-              selectedBuilder: (context, day, focusedDay) {
-                // 日付フォーカス時のマークに相当するウィジェットを返す関数
-                return Center(
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).primaryColor,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            const CustomMargin(height: 20),
+            // カレンダー
+            TableCalendar(
+              calendarBuilders: CalendarBuilders(
+                todayBuilder: (context, day, focusedDay) {
+                  // 今日のマークに相当するウィジェットを返す関数
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                          width: 1,
+                        ),
+                      ),
+                      alignment: const Alignment(0.0, 0.0),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(color: Theme.of(context).primaryColor),
+                      ),
                     ),
-                    alignment: const Alignment(0.0, 0.0),
-                    child: Text(day.day.toString()),
-                  )
-                );
-              }
+                  );
+                },
+                selectedBuilder: (context, day, focusedDay) {
+                  // 日付フォーカス時のマークに相当するウィジェットを返す関数
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      alignment: const Alignment(0.0, 0.0),
+                      child: Text(day.day.toString()),
+                    ),
+                  );
+                },
+              ),
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+              ),
+              firstDay: DateTime.utc(2010, 1, 1),
+              lastDay: DateTime.utc(9999, 12, 31),
+              focusedDay: _focusedDay,
+              locale: Localizations.localeOf(context).toString(),
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
+              },
+              onDaySelected: (selectedDay, focusedDay) {
+                Vibration.vibrate(duration: 10);
+                // TODO:タスク一覧表示の作成
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
             ),
-            calendarStyle: const CalendarStyle(
-                isTodayHighlighted: false,
-            ),
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-            ),
-            firstDay: DateTime.utc(2010, 1, 1),
-            lastDay: DateTime.utc(9999, 12, 31),
-            focusedDay: _focusedDay,
-            locale: 'ja_JP',
-            selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              Vibration.vibrate(duration: 10);
-              // TODO:タスク一覧表示の作成
-              setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay;
-              });
-            },
-          ),
-        ],
+          ],
+        ),
       ),
 
       // タスク追加ボタン
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Theme.of(context).textTheme.bodyMedium!.color,
         onPressed: () {
           Vibration.vibrate(duration: 20);
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) => const AddTask(),
-          ));
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return const MicoMiSubPage(title: "タスクの追加");
+          }));
         },
         label: Text(
           "タスクを追加",
