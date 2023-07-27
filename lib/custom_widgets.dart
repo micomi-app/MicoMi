@@ -10,8 +10,11 @@ class CustomTextField extends StatelessWidget {
     this.isTextAlignCenter,
     required this.isUnderline,
     this.onChanged,
+    this.validator,
+    this.initialValue,
   });
 
+  final String? initialValue;
   final String hintText;
   final TextStyle? textStyle;
   final bool? isMultiline;
@@ -19,12 +22,14 @@ class CustomTextField extends StatelessWidget {
   final bool? isTextAlignCenter;
   final bool isUnderline;
   final void Function(String)? onChanged;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 300,
-      child: TextField(
+      child: TextFormField(
+        initialValue: initialValue,
         textAlign:
             isTextAlignCenter == true ? TextAlign.center : TextAlign.start,
         autofocus: autoFocus == true,
@@ -32,6 +37,7 @@ class CustomTextField extends StatelessWidget {
         maxLines: isMultiline == true ? null : 1,
         style: textStyle,
         onChanged: onChanged,
+        validator: validator,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: textStyle,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vibration/vibration.dart';
-import 'custom_material_app.dart';
 import 'custom_widgets.dart';
+import 'main.dart';
 
 class MicoMiSubPage extends StatefulWidget {
   const MicoMiSubPage({super.key, required this.title});
@@ -15,6 +15,9 @@ class MicoMiSubPage extends StatefulWidget {
 
 class AddTask extends State<MicoMiSubPage> {
   DateTimeRange? taskDateRange;
+  String? taskName;
+  String? taskDetail;
+
   @override
   Widget build(BuildContext context) {
     Future pickDateRange(BuildContext context) async {
@@ -50,8 +53,8 @@ class AddTask extends State<MicoMiSubPage> {
 
     DateFormat formatter =
         DateFormat('yyyy/MM/dd(E)', Localizations.localeOf(context).toString());
-    String? taskName;
-    String? taskDetail;
+
+    final formKey = GlobalKey<FormState>();
 
     return Scaffold(
       appBar: AppBar(
@@ -62,50 +65,71 @@ class AddTask extends State<MicoMiSubPage> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const CustomMargin(height: 20),
-              CustomTextField(
-                hintText: "タスクの名前を入力",
-                textStyle: TextStyle(
-                  fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const CustomMargin(height: 20),
+                CustomTextField(
+                  initialValue: taskName,
+                  hintText: "タスクの名前を入力",
+                  textStyle: TextStyle(
+                    fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+                  ),
+                  isUnderline: true,
+                  autoFocus: taskName == null,
+                  isTextAlignCenter: true,
+                  onChanged: (value) => {taskName = value},
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "タスクの名前を入力してください。";
+                    }
+                    return null;
+                  },
                 ),
-                isUnderline: true,
-                autoFocus: true,
-                isTextAlignCenter: true,
-                onChanged: (value) => {taskName = value},
-              ),
-              const CustomMargin(height: 30),
-              CustomTextField(
+                const CustomMargin(height: 30),
+                CustomTextField(
+                  initialValue: taskDetail,
                   isMultiline: true,
                   isUnderline: false,
                   hintText: "くわしく\n\n\n\n\n",
-                  onChanged: (value) => {taskDetail = value}),
-              const CustomMargin(height: 10),
-              CustomElevatedButton(
-                label: taskDateRange == null
-                    ? "期間を決める"
-                    : "${formatter.format(taskDateRange!.start)} ～ ${formatter.format(taskDateRange!.end)}",
-                isPrimary: false,
-                isRoundedSquare: true,
-                width: 300,
-                onPressed: () => {pickDateRange(context)},
-              ),
-              const CustomMargin(height: 20),
-              CustomElevatedButton(
-                label: "決定！",
-                isPrimary: true,
-                isRoundedSquare: false,
-                onPressed: () {
-                  Vibration.vibrate(duration: 10);
-                  Navigator.popUntil(
-                    context,
-                    (Route<dynamic> route) => route.isFirst,
-                  );
-                },
-              ),
-            ],
+                  onChanged: (value) => {taskDetail = value},
+                ),
+                const CustomMargin(height: 10),
+                CustomElevatedButton(
+                  label: taskDateRange == null
+                      ? "期間を決める"
+                      : "${formatter.format(taskDateRange!.start)} ～ ${formatter.format(taskDateRange!.end)}",
+                  isPrimary: false,
+                  isRoundedSquare: true,
+                  width: 300,
+                  onPressed: () => {pickDateRange(context)},
+                ),
+                const CustomMargin(height: 20),
+                CustomElevatedButton(
+                  label: "決定！",
+                  isPrimary: true,
+                  isRoundedSquare: false,
+                  onPressed: () {
+                    Vibration.vibrate(duration: 10);
+                    if (formKey.currentState!.validate()) {
+                      setState(() {
+                        tasks.add({
+                          "name": taskName!,
+                          "detail": taskDetail,
+                          "dateRange": taskDateRange,
+                        });
+                      });
+                      Navigator.popUntil(
+                        context,
+                        (Route<dynamic> route) => route.isFirst,
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

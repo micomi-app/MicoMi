@@ -6,6 +6,7 @@ import 'add_task.dart';
 import 'custom_material_app.dart';
 import 'custom_widgets.dart';
 
+Set<Map<String, dynamic>> tasks = {};
 void main() {
   initializeDateFormatting().then((_) => runApp(const MicoMiMain()));
 }
@@ -115,6 +116,31 @@ class CalendarPage extends State<MicoMiMainPage> {
                 });
               },
             ),
+
+            // とりあえずのテスト
+            for (final task in tasks)
+              Container(
+                width: 300,
+                margin: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      task["name"],
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    Text(
+                      task["detail"] ?? "説明はありません",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -126,7 +152,9 @@ class CalendarPage extends State<MicoMiMainPage> {
           Vibration.vibrate(duration: 20);
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return const MicoMiSubPage(title: "タスクの追加");
-          }));
+          })).then((value) {
+            setState(() {});
+          });
         },
         label: const Text("タスクを追加"),
         icon: const Icon(Icons.add),
