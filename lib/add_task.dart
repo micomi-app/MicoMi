@@ -26,41 +26,45 @@ class MicoMiSubPage extends StatefulWidget {
 }
 
 class AddTask extends State<MicoMiSubPage> {
-  DateTimeRange? selectedDateRange;
-  Future _pickDateRange(BuildContext context) async {
-    final DateTimeRange initialDateRange = DateTimeRange(
-      start: DateTime.now(),
-      end: DateTime.now().add(const Duration(days: 1)),
-    );
-
-    final DateTimeRange? newDateRange = await showDateRangePicker(
-      context: context,
-      initialDateRange: initialDateRange,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 3),
-      locale: Localizations.localeOf(context),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData(
-            colorScheme: Theme.of(context).colorScheme,
-            useMaterial3: true,
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (newDateRange != null) {
-      setState(() => selectedDateRange = newDateRange);
-    } else {
-      return;
-    }
-  }
-
+  DateTimeRange? taskDateRange;
   @override
   Widget build(BuildContext context) {
+    Future pickDateRange(BuildContext context) async {
+      final DateTimeRange initialDateRange = taskDateRange == null
+          ? DateTimeRange(
+              start: DateTime.now(),
+              end: DateTime.now().add(const Duration(days: 1)),
+            )
+          : taskDateRange!;
+
+      final DateTimeRange? newDateRange = await showDateRangePicker(
+        context: context,
+        initialDateRange: initialDateRange,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(DateTime.now().year + 3),
+        locale: Localizations.localeOf(context),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData(
+              colorScheme: Theme.of(context).colorScheme,
+              useMaterial3: true,
+            ),
+            child: child!,
+          );
+        },
+      );
+      if (newDateRange != null) {
+        setState(() => taskDateRange = newDateRange);
+      } else {
+        return;
+      }
+    }
+
     DateFormat formatter =
         DateFormat('yyyy/MM/dd(E)', Localizations.localeOf(context).toString());
+    String? taskName;
+    String? taskDetail;
+
     return CustomMaterialApp(
       title: 'MicoMi',
       home: Scaffold(
@@ -84,22 +88,23 @@ class AddTask extends State<MicoMiSubPage> {
                   isUnderline: true,
                   autoFocus: true,
                   isTextAlignCenter: true,
+                  onChanged: (value) => {taskName = value},
                 ),
                 const CustomMargin(height: 30),
-                const CustomTextField(
-                  isMultiline: true,
-                  isUnderline: false,
-                  hintText: "詳細\n\n\n\n\n",
-                ),
+                CustomTextField(
+                    isMultiline: true,
+                    isUnderline: false,
+                    hintText: "くわしく\n\n\n\n\n",
+                    onChanged: (value) => {taskDetail = value}),
                 const CustomMargin(height: 10),
                 CustomElevatedButton(
-                  label: selectedDateRange == null
-                      ? "期間を設定"
-                      : "${formatter.format(selectedDateRange!.start)} ～ ${formatter.format(selectedDateRange!.end)}",
+                  label: taskDateRange == null
+                      ? "期間を決める"
+                      : "${formatter.format(taskDateRange!.start)} ～ ${formatter.format(taskDateRange!.end)}",
                   isPrimary: false,
                   isRoundedSquare: true,
                   width: 300,
-                  onPressed: () => {_pickDateRange(context)},
+                  onPressed: () => {pickDateRange(context)},
                 ),
                 const CustomMargin(height: 20),
                 CustomElevatedButton(
@@ -108,7 +113,6 @@ class AddTask extends State<MicoMiSubPage> {
                   isRoundedSquare: false,
                   onPressed: () {
                     Vibration.vibrate(duration: 10);
-                    // TODO: タスク追加処理の追加
                     Navigator.popUntil(
                       context,
                       (Route<dynamic> route) => route.isFirst,

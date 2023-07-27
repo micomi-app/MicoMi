@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
     this.textStyle,
     this.isTextAlignCenter,
     required this.isUnderline,
+    this.onChanged,
   });
 
   final String hintText;
@@ -17,6 +18,7 @@ class CustomTextField extends StatelessWidget {
   final bool? autoFocus;
   final bool? isTextAlignCenter;
   final bool isUnderline;
+  final void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class CustomTextField extends StatelessWidget {
         keyboardType: isMultiline == true ? TextInputType.multiline : null,
         maxLines: isMultiline == true ? null : 1,
         style: textStyle,
+        onChanged: onChanged,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: textStyle,
