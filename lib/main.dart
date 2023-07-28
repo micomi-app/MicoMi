@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vibration/vibration.dart';
 import 'package:sqflite/sqflite.dart';
 import 'add_task.dart';
 import 'custom_material_app.dart';
 import 'custom_widgets.dart';
+
+DateFormat formatterForSQL = DateFormat('yyyy-MM-dd');
 
 class Task {
   Task({
@@ -23,8 +26,8 @@ class Task {
     return {
       'name': name,
       'detail': detail,
-      'start': start.toString(),
-      'end': end.toString(),
+      'start': formatterForSQL.format(start),
+      'end': formatterForSQL.format(end)
     };
   }
 }
@@ -48,9 +51,9 @@ Future<void> insertTask(Task task) async {
   );
 }
 
-Future<List<Task>> getTasks() async {
+Future<List<Task>> getTasks(String query) async {
   final Database db = await database;
-  final List<Map<String, dynamic>> maps = await db.query('tasks');
+  final List<Map<String, dynamic>> maps = await db.query(query);
   return List.generate(maps.length, (i) {
     return Task(
       name: maps[i]['name'],
@@ -87,7 +90,6 @@ class MicoMiMainPage extends StatefulWidget {
 }
 
 class CalendarPage extends State<MicoMiMainPage> {
-  DateTime? _selectedDay;
   DateTime _focusedDay = DateTime.now();
 
   @override
@@ -159,14 +161,13 @@ class CalendarPage extends State<MicoMiMainPage> {
               focusedDay: _focusedDay,
               locale: Localizations.localeOf(context).toString(),
               selectedDayPredicate: (day) {
-                return isSameDay(_selectedDay, day);
+                return isSameDay(_focusedDay, day);
               },
               onDaySelected: (selectedDay, focusedDay) {
                 Vibration.vibrate(duration: 10);
                 // TODO:タスク一覧表示の作成
                 setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
+                  _focusedDay = selectedDay;
                 });
               },
             ),
@@ -188,14 +189,16 @@ class CalendarPage extends State<MicoMiMainPage> {
                             child: Column(
                               children: [
                                 Text(tasks[index].name),
-                                Text(
-                                  tasks[index].detail ?? "N/A",
-                                  style: TextStyle(
+                                if (tasks[index].detail != null)
+                                  Text(
+                                    tasks[index].detail!,
+                                    style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSecondary
-                                          .withOpacity(0.5)),
-                                ),
+                                          .withOpacity(0.5),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -207,7 +210,8 @@ class CalendarPage extends State<MicoMiMainPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
               },
-              future: getTasks(),
+              future: getTasks(
+                  "tasks WHERE start <= '${formatterForSQL.format(_focusedDay)}' AND end >= '${formatterForSQL.format(_focusedDay)}'"),
             ),
           ],
         ),
