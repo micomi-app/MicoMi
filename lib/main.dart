@@ -166,7 +166,6 @@ class CalendarPage extends State<MicoMiMainPage> {
               },
               onDaySelected: (selectedDay, focusedDay) {
                 Vibration.vibrate(duration: 10);
-                // TODO:タスク一覧表示の作成
                 setState(() {
                   _focusedDay = selectedDay;
                 });
