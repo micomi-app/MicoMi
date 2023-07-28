@@ -2,11 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vibration/vibration.dart';
+import 'package:sqflite/sqflite.dart';
 import 'add_task.dart';
 import 'custom_material_app.dart';
 import 'custom_widgets.dart';
 
-Set<Map<String, dynamic>> tasks = {};
+class Task {
+  Task({
+    required this.name,
+    required this.detail,
+    required this.start,
+    required this.end,
+  });
+
+  final String name;
+  final String? detail;
+  final DateTime start;
+  final DateTime end;
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'detail': detail,
+      'start': start.toString(),
+      'end': end.toString(),
+    };
+  }
+}
+
+final Future<Database> database = openDatabase(
+  "tasks.db",
+  onCreate: (db, version) {
+    return db.execute(
+      'CREATE TABLE tasks(id INTEGER PRIMARY KEY, name TEXT, detail TEXT, start TEXT, end TEXT)',
+    );
+  },
+  version: 1,
+);
+
+Future<void> insertTask(Task task) async {
+  final Database db = await database;
+  await db.insert(
+    'tasks',
+    task.toMap(),
+    conflictAlgorithm: ConflictAlgorithm.replace,
+  );
+}
+
+Future<List<Task>> getTasks() async {
+  final Database db = await database;
+  final List<Map<String, dynamic>> maps = await db.query('tasks');
+  return List.generate(maps.length, (i) {
+    return Task(
+      name: maps[i]['name'],
+      detail: maps[i]['detail'],
+      start: DateTime.parse(maps[i]['start']),
+      end: DateTime.parse(maps[i]['end']),
+    );
+  });
+}
+
 void main() {
   initializeDateFormatting().then((_) => runApp(const MicoMiMain()));
 }
@@ -117,30 +171,44 @@ class CalendarPage extends State<MicoMiMainPage> {
               },
             ),
 
-            // とりあえずのテスト
-            for (final task in tasks)
-              Container(
-                width: 300,
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      task["name"],
-                      style: Theme.of(context).textTheme.bodyMedium,
+            FutureBuilder(
+              builder: (context, AsyncSnapshot<List<Task>> snapshot) {
+                if (snapshot.hasData) {
+                  final List<Task> tasks = snapshot.data!;
+                  return SizedBox(
+                    width: 300,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: tasks.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: Theme.of(context).colorScheme.secondary,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            child: Column(
+                              children: [
+                                Text(tasks[index].name),
+                                Text(
+                                  tasks[index].detail ?? "N/A",
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondary
+                                          .withOpacity(0.5)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    Text(
-                      task["detail"] ?? "説明はありません",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+              future: getTasks(),
+            ),
           ],
         ),
       ),

@@ -104,7 +104,10 @@ class AddTask extends State<MicoMiSubPage> {
                   isPrimary: false,
                   isRoundedSquare: true,
                   width: 300,
-                  onPressed: () => {pickDateRange(context)},
+                  onPressed: () => {
+                    Vibration.vibrate(duration: 10),
+                    pickDateRange(context),
+                  },
                 ),
                 const CustomMargin(height: 20),
                 CustomElevatedButton(
@@ -114,13 +117,12 @@ class AddTask extends State<MicoMiSubPage> {
                   onPressed: () {
                     Vibration.vibrate(duration: 10);
                     if (formKey.currentState!.validate()) {
-                      setState(() {
-                        tasks.add({
-                          "name": taskName!,
-                          "detail": taskDetail,
-                          "dateRange": taskDateRange,
-                        });
-                      });
+                      insertTask(Task(
+                        name: taskName!,
+                        detail: taskDetail,
+                        start: taskDateRange!.start,
+                        end: taskDateRange!.end,
+                      ));
                       Navigator.popUntil(
                         context,
                         (Route<dynamic> route) => route.isFirst,
