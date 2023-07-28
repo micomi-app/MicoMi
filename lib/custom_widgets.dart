@@ -71,15 +71,16 @@ class CustomTextField extends StatelessWidget {
 }
 
 class CustomMargin extends StatelessWidget {
-  const CustomMargin({super.key, required this.height});
+  const CustomMargin({super.key, this.height, this.width});
 
-  final double height;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 100,
-      height: height,
+      width: width ?? 100,
+      height: height ?? 100,
     );
   }
 }
@@ -107,8 +108,13 @@ class CustomElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary ? Theme.of(context).primaryColor : null,
-          foregroundColor: Theme.of(context).textTheme.bodyMedium!.color,
+          backgroundColor: isPrimary
+              ? Theme.of(context).primaryColor
+              : Color.lerp(Theme.of(context).colorScheme.onBackground,
+                  Theme.of(context).colorScheme.background, 0.9)!,
+          foregroundColor: isPrimary
+              ? Theme.of(context).colorScheme.onPrimary
+              : Theme.of(context).colorScheme.onBackground,
           shape: isRoundedSquare
               ? RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

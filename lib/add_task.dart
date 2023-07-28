@@ -110,25 +110,43 @@ class AddTask extends State<MicoMiSubPage> {
                   },
                 ),
                 const CustomMargin(height: 20),
-                CustomElevatedButton(
-                  label: "決定！",
-                  isPrimary: true,
-                  isRoundedSquare: false,
-                  onPressed: () {
-                    Vibration.vibrate(duration: 10);
-                    if (formKey.currentState!.validate()) {
-                      insertTask(Task(
-                        name: taskName!,
-                        detail: taskDetail,
-                        start: taskDateRange!.start,
-                        end: taskDateRange!.end,
-                      ));
-                      Navigator.popUntil(
-                        context,
-                        (Route<dynamic> route) => route.isFirst,
-                      );
-                    }
-                  },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomElevatedButton(
+                      label: "決定！",
+                      isPrimary: true,
+                      isRoundedSquare: false,
+                      onPressed: () {
+                        Vibration.vibrate(duration: 10);
+                        if (formKey.currentState!.validate()) {
+                          insertTask(Task(
+                            name: taskName!,
+                            detail: taskDetail,
+                            start: taskDateRange!.start,
+                            end: taskDateRange!.end,
+                          ));
+                          Navigator.popUntil(
+                            context,
+                            (Route<dynamic> route) => route.isFirst,
+                          );
+                        }
+                      },
+                    ),
+                    const CustomMargin(width: 10),
+                    CustomElevatedButton(
+                      label: "やっぱやめる",
+                      isPrimary: false,
+                      isRoundedSquare: false,
+                      onPressed: () {
+                        Vibration.vibrate(duration: 10);
+                        Navigator.popUntil(
+                          context,
+                          (Route<dynamic> route) => route.isFirst,
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

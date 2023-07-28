@@ -156,6 +156,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                 formatButtonVisible: false,
                 titleCentered: true,
               ),
+              daysOfWeekHeight: 32,
               firstDay: DateTime.utc(2010, 1, 1),
               lastDay: DateTime.utc(9999, 12, 31),
               focusedDay: _focusedDay,
@@ -188,7 +189,14 @@ class CalendarPage extends State<MicoMiMainPage> {
                             padding: const EdgeInsets.all(10),
                             child: Column(
                               children: [
-                                Text(tasks[index].name),
+                                Text(
+                                  tasks[index].name,
+                                  style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
+                                  ),
+                                ),
                                 if (tasks[index].detail != null)
                                   Text(
                                     tasks[index].detail!,
@@ -196,7 +204,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .onSecondary
-                                          .withOpacity(0.5),
+                                          .withOpacity(0.7),
                                     ),
                                   ),
                               ],
