@@ -140,10 +140,43 @@ class AddTask extends State<MicoMiSubPage> {
                       isRoundedSquare: false,
                       onPressed: () {
                         Vibration.vibrate(duration: 10);
-                        Navigator.popUntil(
-                          context,
-                          (Route<dynamic> route) => route.isFirst,
-                        );
+                        if (taskName != null ||
+                            taskDetail != null ||
+                            taskDateRange != null) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("確認"),
+                                content: const Text(
+                                    "タスクの追加をやめますか？\n入力した内容は保存されません。"),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: const Text("やめる"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      Navigator.popUntil(
+                                        context,
+                                        (Route<dynamic> route) => route.isFirst,
+                                      );
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: const Text("やめない"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          Navigator.popUntil(
+                            context,
+                            (Route<dynamic> route) => route.isFirst,
+                          );
+                        }
                       },
                     ),
                   ],
