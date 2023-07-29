@@ -201,30 +201,33 @@ class CalendarPage extends State<MicoMiMainPage> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const CustomMargin(height: 15),
-                                  Text(
-                                    tasks[index].name,
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondary,
-                                    ),
-                                  ),
-                                  if (tasks[index].detail != "")
+                              SizedBox(
+                                width: 190,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const CustomMargin(height: 15),
                                     Text(
-                                      tasks[index].detail,
+                                      tasks[index].name,
                                       style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onSecondary
-                                            .withOpacity(0.7),
+                                            .onSecondary,
                                       ),
                                     ),
-                                  const CustomMargin(height: 15),
-                                ],
+                                    if (tasks[index].detail != "")
+                                      Text(
+                                        tasks[index].detail,
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSecondary
+                                              .withOpacity(0.7),
+                                        ),
+                                      ),
+                                    const CustomMargin(height: 15),
+                                  ],
+                                ),
                               ),
                               Positioned(
                                 right: 10,
