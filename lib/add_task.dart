@@ -122,7 +122,7 @@ class AddTask extends State<MicoMiSubPage> {
                         if (formKey.currentState!.validate()) {
                           insertTask(Task(
                             name: taskName!,
-                            detail: taskDetail,
+                            detail: taskDetail ?? "",
                             start: taskDateRange!.start,
                             end: taskDateRange!.end,
                           ));
@@ -140,8 +140,8 @@ class AddTask extends State<MicoMiSubPage> {
                       isRoundedSquare: false,
                       onPressed: () {
                         Vibration.vibrate(duration: 10);
-                        if (taskName != null ||
-                            taskDetail != null ||
+                        if (taskName != null && taskName != "" ||
+                            taskDetail != null && taskDetail != "" ||
                             taskDateRange != null) {
                           showDialog(
                             context: context,

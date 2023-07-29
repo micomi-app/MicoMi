@@ -12,14 +12,16 @@ DateFormat formatterForSQL = DateFormat('yyyy-MM-dd');
 
 class Task {
   Task({
+    this.id,
     required this.name,
     required this.detail,
     required this.start,
     required this.end,
   });
 
+  final int? id;
   final String name;
-  final String? detail;
+  final String detail;
   final DateTime start;
   final DateTime end;
   Map<String, dynamic> toMap() {
@@ -36,10 +38,10 @@ final Future<Database> database = openDatabase(
   "tasks.db",
   onCreate: (db, version) {
     return db.execute(
-      'CREATE TABLE tasks(id INTEGER PRIMARY KEY, name TEXT, detail TEXT, start TEXT, end TEXT)',
+      'CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, detail TEXT, start TEXT, end TEXT)',
     );
   },
-  version: 1,
+  version: 3,
 );
 
 Future<void> insertTask(Task task) async {
@@ -51,11 +53,21 @@ Future<void> insertTask(Task task) async {
   );
 }
 
+Future<void> deleteTask(int id) async {
+  final Database db = await database;
+  await db.delete(
+    'tasks',
+    where: "id = ?",
+    whereArgs: [id],
+  );
+}
+
 Future<List<Task>> getTasks(String query) async {
   final Database db = await database;
   final List<Map<String, dynamic>> maps = await db.query(query);
   return List.generate(maps.length, (i) {
     return Task(
+      id: maps[i]['id'],
       name: maps[i]['name'],
       detail: maps[i]['detail'],
       start: DateTime.parse(maps[i]['start']),
@@ -184,30 +196,73 @@ class CalendarPage extends State<MicoMiMainPage> {
                       itemBuilder: (context, index) {
                         return Card(
                           color: Theme.of(context).colorScheme.secondary,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                Text(
-                                  tasks[index].name,
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary,
-                                  ),
-                                ),
-                                if (tasks[index].detail != null)
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const CustomMargin(height: 15),
                                   Text(
-                                    tasks[index].detail!,
+                                    tasks[index].name,
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .onSecondary
-                                          .withOpacity(0.7),
+                                          .onSecondary,
                                     ),
                                   ),
-                              ],
-                            ),
+                                  if (tasks[index].detail != "")
+                                    Text(
+                                      tasks[index].detail,
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondary
+                                            .withOpacity(0.7),
+                                      ),
+                                    ),
+                                  const CustomMargin(height: 15),
+                                ],
+                              ),
+                              Positioned(
+                                right: 10,
+                                child: IconButton(
+                                  onPressed: () {
+                                    Vibration.vibrate(duration: 10);
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: const Text("タスクの削除"),
+                                          content: Text(
+                                              "タスク「${tasks[index].name}」を削除しますか？"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Vibration.vibrate(duration: 10);
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("キャンセル"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                setState(() {
+                                                  Vibration.vibrate(duration: 10);
+                                                  deleteTask(tasks[index].id!);
+                                                });
+                                              },
+                                              child: const Text("削除"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete_forever),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       },
