@@ -88,22 +88,18 @@ class CustomMargin extends StatelessWidget {
 class CustomElevatedButton extends StatelessWidget {
   const CustomElevatedButton({
     super.key,
-    this.child,
-    this.label,
+    required this.label,
     required this.onPressed,
-    this.onLongPress,
     required this.isPrimary,
     this.width,
     required this.isRoundedSquare,
   });
 
-  final Widget? child;
-  final String? label;
+  final String label;
   final bool isPrimary;
   final bool isRoundedSquare;
   final double? width;
   final void Function()? onPressed;
-  final void Function()? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +107,6 @@ class CustomElevatedButton extends StatelessWidget {
       width: width,
       child: ElevatedButton(
         onPressed: onPressed,
-        onLongPress: onLongPress,
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
               ? Theme.of(context).primaryColor
@@ -126,7 +121,7 @@ class CustomElevatedButton extends StatelessWidget {
                 )
               : null,
         ),
-        child: label == null ? child : Text(label!),
+        child: Text(label),
       ),
     );
   }

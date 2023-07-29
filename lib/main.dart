@@ -248,7 +248,8 @@ class CalendarPage extends State<MicoMiMainPage> {
                                               onPressed: () {
                                                 Navigator.pop(context);
                                                 setState(() {
-                                                  Vibration.vibrate(duration: 10);
+                                                  Vibration.vibrate(
+                                                      duration: 10);
                                                   deleteTask(tasks[index].id!);
                                                 });
                                               },
