@@ -5,9 +5,7 @@ import 'custom_widgets.dart';
 import 'main.dart';
 
 class MicoMiSubPage extends StatefulWidget {
-  const MicoMiSubPage({super.key, required this.title});
-
-  final String title;
+  const MicoMiSubPage({super.key});
 
   @override
   State<MicoMiSubPage> createState() => AddTask();

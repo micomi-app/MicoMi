@@ -268,6 +268,15 @@ class CalendarPage extends State<MicoMiMainPage> {
                                   icon: const Icon(Icons.delete_forever),
                                 ),
                               ),
+                              Positioned(
+                                left: 10,
+                                child: IconButton(
+                                  onPressed: () {
+                                    // TODO: タスク編集
+                                  },
+                                  icon: const Icon(Icons.edit),
+                                ),
+                              )
                             ],
                           ),
                         );
@@ -291,7 +300,7 @@ class CalendarPage extends State<MicoMiMainPage> {
         onPressed: () {
           Vibration.vibrate(duration: 20);
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const MicoMiSubPage(title: "タスクの追加");
+            return const MicoMiSubPage();
           })).then((value) {
             setState(() {});
           });
