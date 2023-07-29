@@ -103,6 +103,7 @@ class MicoMiMainPage extends StatefulWidget {
 
 class CalendarPage extends State<MicoMiMainPage> {
   DateTime _focusedDay = DateTime.now();
+  DateTime _selectedDay = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -174,12 +175,13 @@ class CalendarPage extends State<MicoMiMainPage> {
               focusedDay: _focusedDay,
               locale: Localizations.localeOf(context).toString(),
               selectedDayPredicate: (day) {
-                return isSameDay(_focusedDay, day);
+                return isSameDay(_selectedDay, day);
               },
               onDaySelected: (selectedDay, focusedDay) {
                 Vibration.vibrate(duration: 10);
                 setState(() {
-                  _focusedDay = selectedDay;
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
                 });
               },
             ),
@@ -274,7 +276,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                 }
               },
               future: getTasks(
-                  "tasks WHERE start <= '${formatterForSQL.format(_focusedDay)}' AND end >= '${formatterForSQL.format(_focusedDay)}'"),
+                  "tasks WHERE start <= '${formatterForSQL.format(_selectedDay)}' AND end >= '${formatterForSQL.format(_selectedDay)}'"),
             ),
           ],
         ),
