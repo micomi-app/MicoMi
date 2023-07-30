@@ -10,10 +10,10 @@ class MicoMiSubPage extends StatefulWidget {
   final Task? editTask;
 
   @override
-  State<MicoMiSubPage> createState() => AddTask();
+  State<MicoMiSubPage> createState() => EditTasks();
 }
 
-class AddTask extends State<MicoMiSubPage> {
+class EditTasks extends State<MicoMiSubPage> {
   late DateTimeRange? taskDateRange = widget.editTask == null
       ? null
       : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);
@@ -151,7 +151,7 @@ class AddTask extends State<MicoMiSubPage> {
                               return AlertDialog(
                                 title: const Text("確認"),
                                 content: const Text(
-                                    "タスクの追加をやめますか？\n入力した内容は保存されません。"),
+                                    "本当にやめますか？\n入力した内容は保存されません。"),
                                 actions: <Widget>[
                                   TextButton(
                                     child: const Text("やめる"),
