@@ -46,11 +46,20 @@ final Future<Database> database = openDatabase(
 
 Future<void> insertTask(Task task) async {
   final Database db = await database;
-  await db.insert(
-    'tasks',
-    task.toMap(),
-    conflictAlgorithm: ConflictAlgorithm.replace,
-  );
+  if (task.id == null) {
+    await db.insert(
+      'tasks',
+      task.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  } else {
+    await db.update(
+      'tasks',
+      task.toMap(),
+      where: "id = ?",
+      whereArgs: [task.id],
+    );
+  }
 }
 
 Future<void> deleteTask(int id) async {
@@ -271,7 +280,17 @@ class CalendarPage extends State<MicoMiMainPage> {
                                 left: 10,
                                 child: IconButton(
                                   onPressed: () {
-                                    // TODO: タスク編集
+                                    Vibration.vibrate(duration: 10);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return MicoMiSubPage(
+                                          editTask :tasks[index],
+                                        );
+                                      }),
+                                    ).then((value) {
+                                      setState(() {});
+                                    });
                                   },
                                   icon: const Icon(Icons.edit),
                                 ),

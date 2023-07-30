@@ -5,16 +5,20 @@ import 'custom_widgets.dart';
 import 'main.dart';
 
 class MicoMiSubPage extends StatefulWidget {
-  const MicoMiSubPage({super.key});
+  const MicoMiSubPage({super.key, this.editTask});
+
+  final Task? editTask;
 
   @override
   State<MicoMiSubPage> createState() => AddTask();
 }
 
 class AddTask extends State<MicoMiSubPage> {
-  DateTimeRange? taskDateRange;
-  String? taskName;
-  String? taskDetail;
+  late DateTimeRange? taskDateRange = widget.editTask == null
+      ? null
+      : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);
+  late String? taskName = widget.editTask?.name;
+  late String? taskDetail = widget.editTask?.detail;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +80,6 @@ class AddTask extends State<MicoMiSubPage> {
                     fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
                   ),
                   isUnderline: true,
-                  autoFocus: taskName == null,
                   isTextAlignCenter: true,
                   onChanged: (value) => {taskName = value},
                   validator: (value) {
@@ -119,6 +122,7 @@ class AddTask extends State<MicoMiSubPage> {
                         Vibration.vibrate(duration: 10);
                         if (formKey.currentState!.validate()) {
                           insertTask(Task(
+                            id: widget.editTask?.id,
                             name: taskName!,
                             detail: taskDetail ?? "",
                             start: taskDateRange!.start,
