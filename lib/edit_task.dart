@@ -63,7 +63,7 @@ class EditTasks extends State<MicoMiSubPage> {
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        title: const Text("タスクの追加"),
+        title: const Text("タスクの追加/編集"),
       ),
       body: Center(
         child: SingleChildScrollView(
