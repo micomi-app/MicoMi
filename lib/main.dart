@@ -113,6 +113,7 @@ class MicoMiMainPage extends StatefulWidget {
 class CalendarPage extends State<MicoMiMainPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
+  Task? _selectedTask;
 
   @override
   Widget build(BuildContext context) {
@@ -131,49 +132,63 @@ class CalendarPage extends State<MicoMiMainPage> {
             // カレンダー
             TableCalendar(
               calendarBuilders: CalendarBuilders(
-                todayBuilder: (context, day, focusedDay) {
-                  // 今日のマークに相当するウィジェットを返す関数
-                  return Center(
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 1,
-                        ),
-                      ),
-                      alignment: const Alignment(0.0, 0.0),
-                      child: Text(
-                        day.day.toString(),
-                        style: TextStyle(color: Theme.of(context).primaryColor),
+                rangeStartBuilder: (context, day, focusedDay) {
+                  return Center(child: Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    child: Text(
+                      day.day.toString(),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
-                  );
+                  ));
                 },
-                selectedBuilder: (context, day, focusedDay) {
-                  // 日付フォーカス時のマークに相当するウィジェットを返す関数
-                  return Center(
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      alignment: const Alignment(0.0, 0.0),
-                      child: Text(
-                        day.day.toString(),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                rangeEndBuilder: (context, day, focusedDay) {
+                  return Center(child: Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    child: Text(
+                      day.day.toString(),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
-                  );
+                  ));
                 },
               ),
+              calendarStyle: CalendarStyle(
+                selectedDecoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).primaryColor,
+                ),
+                selectedTextStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+                todayDecoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Theme.of(context).primaryColor,
+                    width: 1,
+                  ),
+                ),
+                todayTextStyle: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                ),
+                rangeHighlightColor: Theme.of(context).colorScheme.secondary,
+              ),
+              pageAnimationEnabled: false,
               headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
@@ -182,6 +197,8 @@ class CalendarPage extends State<MicoMiMainPage> {
               firstDay: DateTime.utc(2010, 1, 1),
               lastDay: DateTime.utc(9999, 12, 31),
               focusedDay: _focusedDay,
+              rangeStartDay: _selectedTask?.start,
+              rangeEndDay: _selectedTask?.end,
               locale: Localizations.localeOf(context).toString(),
               selectedDayPredicate: (day) {
                 return isSameDay(_selectedDay, day);
@@ -206,96 +223,115 @@ class CalendarPage extends State<MicoMiMainPage> {
                       itemCount: tasks.length,
                       itemBuilder: (context, index) {
                         return Card(
+                          clipBehavior: Clip.hardEdge,
                           color: Theme.of(context).colorScheme.secondary,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              SizedBox(
-                                width: 190,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const CustomMargin(height: 15),
-                                    Text(
-                                      tasks[index].name,
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSecondary,
-                                      ),
-                                    ),
-                                    if (tasks[index].detail != "")
+                          child: InkWell(
+                            onTap: () {
+                              Vibration.vibrate(duration: 10);
+                              if (_selectedTask?.start != tasks[index].start &&
+                                  _selectedTask?.end != tasks[index].end) {
+                                setState(() {
+                                  _selectedTask = tasks[index];
+                                });
+                              } else {
+                                setState(() {
+                                  _selectedTask = null;
+                                });
+                              }
+                            },
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 190,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const CustomMargin(height: 15),
                                       Text(
-                                        tasks[index].detail,
+                                        tasks[index].name,
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .onSecondary
-                                              .withOpacity(0.7),
+                                              .onSecondary,
                                         ),
                                       ),
-                                    const CustomMargin(height: 15),
-                                  ],
+                                      if (tasks[index].detail != "")
+                                        Text(
+                                          tasks[index].detail,
+                                          style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSecondary
+                                                .withOpacity(0.7),
+                                          ),
+                                        ),
+                                      const CustomMargin(height: 15),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Positioned(
-                                right: 10,
-                                child: IconButton(
-                                  onPressed: () {
-                                    Vibration.vibrate(duration: 10);
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: const Text("タスクの削除"),
-                                          content: Text(
-                                              "タスク「${tasks[index].name}」を削除しますか？"),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Vibration.vibrate(duration: 10);
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text("キャンセル"),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Vibration.vibrate(duration: 10);
-                                                Navigator.pop(context);
-                                                setState(() {
-                                                  deleteTask(tasks[index].id!);
-                                                });
-                                              },
-                                              child: const Text("削除"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  icon: const Icon(Icons.delete_forever),
+                                Positioned(
+                                  right: 10,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      Vibration.vibrate(duration: 10);
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text("タスクの削除"),
+                                            content: Text(
+                                                "タスク「${tasks[index].name}」を削除しますか？"),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Vibration.vibrate(
+                                                      duration: 10);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: const Text("キャンセル"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Vibration.vibrate(
+                                                      duration: 10);
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    deleteTask(
+                                                        tasks[index].id!);
+                                                  });
+                                                },
+                                                child: const Text("削除"),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.delete_forever),
+                                  ),
                                 ),
-                              ),
-                              Positioned(
-                                left: 10,
-                                child: IconButton(
-                                  onPressed: () {
-                                    Vibration.vibrate(duration: 10);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) {
-                                        return MicoMiSubPage(
-                                          editTask :tasks[index],
-                                        );
-                                      }),
-                                    ).then((value) {
-                                      setState(() {});
-                                    });
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                ),
-                              )
-                            ],
+                                Positioned(
+                                  left: 10,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      Vibration.vibrate(duration: 10);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) {
+                                          return MicoMiSubPage(
+                                            editTask: tasks[index],
+                                          );
+                                        }),
+                                      ).then((value) {
+                                        setState(() {});
+                                      });
+                                    },
+                                    icon: const Icon(Icons.edit),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         );
                       },
