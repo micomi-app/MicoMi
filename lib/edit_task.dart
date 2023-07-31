@@ -14,11 +14,10 @@ class MicoMiSubPage extends StatefulWidget {
 }
 
 class EditTasks extends State<MicoMiSubPage> {
-  late DateTimeRange? _taskDateRange = widget.editTask == null
-      ? null
-      : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);
+  late DateTimeRange? _taskDateRange = widget.editTask == null ? null : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);
   late String? _taskName = widget.editTask?.name;
   late String? _taskDetail = widget.editTask?.detail;
+  bool isEdited = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +52,7 @@ class EditTasks extends State<MicoMiSubPage> {
       }
     }
 
-    DateFormat formatter =
-        DateFormat('yyyy/MM/dd(E)', Localizations.localeOf(context).toString());
+    DateFormat formatter = DateFormat('yyyy/MM/dd(E)', Localizations.localeOf(context).toString());
 
     final formKey = GlobalKey<FormState>();
 
@@ -81,7 +79,10 @@ class EditTasks extends State<MicoMiSubPage> {
                   ),
                   isUnderline: true,
                   isTextAlignCenter: true,
-                  onChanged: (value) => {_taskName = value},
+                  onChanged: (value) => {
+                    isEdited = true,
+                    _taskName = value,
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "タスクの名前を入力してください。";
@@ -95,17 +96,16 @@ class EditTasks extends State<MicoMiSubPage> {
                   isMultiline: true,
                   isUnderline: false,
                   hintText: "くわしく\n\n\n\n\n",
-                  onChanged: (value) => {_taskDetail = value},
+                  onChanged: (value) => {isEdited = true, _taskDetail = value},
                 ),
                 const CustomMargin(height: 10),
                 CustomElevatedButton(
-                  label: _taskDateRange == null
-                      ? "期間を決める"
-                      : "${formatter.format(_taskDateRange!.start)} ～ ${formatter.format(_taskDateRange!.end)}",
+                  label: _taskDateRange == null ? "期間を決める" : "${formatter.format(_taskDateRange!.start)} ～ ${formatter.format(_taskDateRange!.end)}",
                   isPrimary: false,
                   isRoundedSquare: true,
                   width: 300,
                   onPressed: () => {
+                    isEdited = true,
                     Vibration.vibrate(duration: 10),
                     pickDateRange(context),
                   },
@@ -142,16 +142,13 @@ class EditTasks extends State<MicoMiSubPage> {
                       isRoundedSquare: false,
                       onPressed: () {
                         Vibration.vibrate(duration: 10);
-                        if (_taskName != null && _taskName != "" ||
-                            _taskDetail != null && _taskDetail != "" ||
-                            _taskDateRange != null) {
+                        if (isEdited) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: const Text("確認"),
-                                content:
-                                    const Text("本当にやめますか？\n入力した内容は保存されません。"),
+                                content: const Text("本当にやめますか？\n入力した内容は保存されません。"),
                                 actions: <Widget>[
                                   TextButton(
                                     child: const Text("やめる"),

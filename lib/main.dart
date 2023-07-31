@@ -29,7 +29,7 @@ class Task {
       'name': name,
       'detail': detail,
       'start': formatterForSQL.format(start),
-      'end': formatterForSQL.format(end)
+      'end': formatterForSQL.format(end),
     };
   }
 }
@@ -133,38 +133,42 @@ class CalendarPage extends State<MicoMiMainPage> {
             TableCalendar(
               calendarBuilders: CalendarBuilders(
                 rangeStartBuilder: (context, day, focusedDay) {
-                  return Center(child: Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    child: Text(
-                      day.day.toString(),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
                       ),
                     ),
-                  ));
+                  );
                 },
                 rangeEndBuilder: (context, day, focusedDay) {
-                  return Center(child: Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    child: Text(
-                      day.day.toString(),
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
                       ),
                     ),
-                  ));
+                  );
                 },
               ),
               calendarStyle: CalendarStyle(
@@ -222,118 +226,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                       shrinkWrap: true,
                       itemCount: tasks.length,
                       itemBuilder: (context, index) {
-                        return Card(
-                          clipBehavior: Clip.hardEdge,
-                          color: Theme.of(context).colorScheme.secondary,
-                          child: InkWell(
-                            onTap: () {
-                              Vibration.vibrate(duration: 10);
-                              if (_selectedTask?.start != tasks[index].start &&
-                                  _selectedTask?.end != tasks[index].end) {
-                                setState(() {
-                                  _selectedTask = tasks[index];
-                                });
-                              } else {
-                                setState(() {
-                                  _selectedTask = null;
-                                });
-                              }
-                            },
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 190,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const CustomMargin(height: 15),
-                                      Text(
-                                        tasks[index].name,
-                                        style: TextStyle(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSecondary,
-                                        ),
-                                      ),
-                                      if (tasks[index].detail != "")
-                                        Text(
-                                          tasks[index].detail,
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSecondary
-                                                .withOpacity(0.7),
-                                          ),
-                                        ),
-                                      const CustomMargin(height: 15),
-                                    ],
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 10,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      Vibration.vibrate(duration: 10);
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text("タスクの削除"),
-                                            content: Text(
-                                                "タスク「${tasks[index].name}」を削除しますか？"),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Vibration.vibrate(
-                                                      duration: 10);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text("キャンセル"),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Vibration.vibrate(
-                                                      duration: 10);
-                                                  Navigator.pop(context);
-                                                  setState(() {
-                                                    deleteTask(
-                                                        tasks[index].id!);
-                                                  });
-                                                },
-                                                child: const Text("削除"),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.delete_forever),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 10,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      Vibration.vibrate(duration: 10);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) {
-                                          return MicoMiSubPage(
-                                            editTask: tasks[index],
-                                          );
-                                        }),
-                                      ).then((value) {
-                                        setState(() {});
-                                      });
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
+                        return taskCard(tasks[index]);
                       },
                     ),
                   );
@@ -341,8 +234,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
               },
-              future: getTasks(
-                  "tasks WHERE start <= '${formatterForSQL.format(_selectedDay)}' AND end >= '${formatterForSQL.format(_selectedDay)}'"),
+              future: getTasks("tasks WHERE start <= '${formatterForSQL.format(_selectedDay)}' AND end >= '${formatterForSQL.format(_selectedDay)}'"),
             ),
           ],
         ),
@@ -361,6 +253,112 @@ class CalendarPage extends State<MicoMiMainPage> {
         },
         label: const Text("タスクを追加"),
         icon: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget taskCard(Task task) {
+    return Card(
+      clipBehavior: Clip.hardEdge,
+      color: Theme.of(context).colorScheme.secondary,
+      child: InkWell(
+        onTap: () {
+          Vibration.vibrate(duration: 10);
+          if (_selectedTask?.start != task.start && _selectedTask?.end != task.end) {
+            setState(() {
+              _selectedTask = task;
+            });
+          } else {
+            setState(() {
+              _selectedTask = null;
+            });
+          }
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox(
+              width: 190,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CustomMargin(height: 15),
+                  Text(
+                    task.name,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  ),
+                  if (task.detail != "")
+                    Text(
+                      task.detail,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.7),
+                      ),
+                    ),
+                  const CustomMargin(height: 15),
+                ],
+              ),
+            ),
+            Positioned(
+              right: 10,
+              child: IconButton(
+                onPressed: () {
+                  Vibration.vibrate(duration: 10);
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("タスクの削除"),
+                        content: Text("タスク「${task.name}」を削除しますか？"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Vibration.vibrate(duration: 10);
+                              Navigator.pop(context);
+                            },
+                            child: const Text("キャンセル"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Vibration.vibrate(duration: 10);
+                              Navigator.pop(context);
+                              setState(() {
+                                deleteTask(task.id!);
+                              });
+                            },
+                            child: const Text("削除"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.delete_forever),
+              ),
+            ),
+            Positioned(
+              left: 10,
+              child: IconButton(
+                onPressed: () {
+                  Vibration.vibrate(duration: 10);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return MicoMiSubPage(
+                        editTask: task,
+                      );
+                    }),
+                  ).then((value) {
+                    _selectedTask = null;
+                    setState(() {});
+                  });
+                },
+                icon: const Icon(Icons.edit),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

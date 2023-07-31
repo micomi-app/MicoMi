@@ -30,8 +30,7 @@ class CustomTextField extends StatelessWidget {
       width: 300,
       child: TextFormField(
         initialValue: initialValue,
-        textAlign:
-            isTextAlignCenter == true ? TextAlign.center : TextAlign.start,
+        textAlign: isTextAlignCenter == true ? TextAlign.center : TextAlign.start,
         autofocus: autoFocus == true,
         keyboardType: isMultiline == true ? TextInputType.multiline : null,
         maxLines: isMultiline == true ? null : 1,
@@ -110,11 +109,8 @@ class CustomElevatedButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
               ? Theme.of(context).primaryColor
-              : Color.lerp(Theme.of(context).colorScheme.onBackground,
-                  Theme.of(context).colorScheme.background, 0.9)!,
-          foregroundColor: isPrimary
-              ? Theme.of(context).colorScheme.onPrimary
-              : Theme.of(context).colorScheme.onBackground,
+              : Color.lerp(Theme.of(context).colorScheme.onBackground, Theme.of(context).colorScheme.background, 0.9)!,
+          foregroundColor: isPrimary ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
           shape: isRoundedSquare
               ? RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
