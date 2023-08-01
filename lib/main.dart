@@ -206,6 +206,9 @@ class CalendarPage extends State<MicoMiMainPage> {
               selectedDayPredicate: (day) {
                 return isSameDay(_selectedDay, day);
               },
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
+              },
               onDaySelected: (selectedDay, focusedDay) {
                 Vibration.vibrate(duration: 10);
                 setState(() {
