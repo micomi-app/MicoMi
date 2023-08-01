@@ -192,7 +192,6 @@ class CalendarPage extends State<MicoMiMainPage> {
                 ),
                 rangeHighlightColor: Theme.of(context).colorScheme.secondary,
               ),
-              pageAnimationEnabled: false,
               headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
@@ -219,16 +218,11 @@ class CalendarPage extends State<MicoMiMainPage> {
             FutureBuilder(
               builder: (context, AsyncSnapshot<List<Task>> snapshot) {
                 if (snapshot.hasData) {
-                  final List<Task> tasks = snapshot.data!;
-                  return SizedBox(
-                    width: 300,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        return taskCard(tasks[index]);
-                      },
-                    ),
+                  return Column(
+                    children: [
+                      for (final task in snapshot.data!) taskCard(task),
+                      const CustomMargin(height: 80),
+                    ],
                   );
                 } else {
                   return const Center(child: CircularProgressIndicator());
@@ -258,106 +252,109 @@ class CalendarPage extends State<MicoMiMainPage> {
   }
 
   Widget taskCard(Task task) {
-    return Card(
-      clipBehavior: Clip.hardEdge,
-      color: Theme.of(context).colorScheme.secondary,
-      child: InkWell(
-        onTap: () {
-          Vibration.vibrate(duration: 10);
-          if (_selectedTask?.start != task.start && _selectedTask?.end != task.end) {
-            setState(() {
-              _selectedTask = task;
-            });
-          } else {
-            setState(() {
-              _selectedTask = null;
-            });
-          }
-        },
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              width: 190,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CustomMargin(height: 15),
-                  Text(
-                    task.name,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
-                  ),
-                  if (task.detail != "")
+    return SizedBox(
+      width: 300,
+      child: Card(
+        clipBehavior: Clip.hardEdge,
+        color: Theme.of(context).colorScheme.secondary,
+        child: InkWell(
+          onTap: () {
+            Vibration.vibrate(duration: 10);
+            if (_selectedTask?.start != task.start && _selectedTask?.end != task.end) {
+              setState(() {
+                _selectedTask = task;
+              });
+            } else {
+              setState(() {
+                _selectedTask = null;
+              });
+            }
+          },
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 190,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CustomMargin(height: 15),
                     Text(
-                      task.detail,
+                      task.name,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.7),
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
-                  const CustomMargin(height: 15),
-                ],
+                    if (task.detail != "")
+                      Text(
+                        task.detail,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.7),
+                        ),
+                      ),
+                    const CustomMargin(height: 15),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-              right: 10,
-              child: IconButton(
-                onPressed: () {
-                  Vibration.vibrate(duration: 10);
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("タスクの削除"),
-                        content: Text("タスク「${task.name}」を削除しますか？"),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Vibration.vibrate(duration: 10);
-                              Navigator.pop(context);
-                            },
-                            child: const Text("キャンセル"),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Vibration.vibrate(duration: 10);
-                              Navigator.pop(context);
-                              setState(() {
-                                deleteTask(task.id!);
-                              });
-                            },
-                            child: const Text("削除"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                icon: const Icon(Icons.delete_forever),
+              Positioned(
+                right: 10,
+                child: IconButton(
+                  onPressed: () {
+                    Vibration.vibrate(duration: 10);
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("タスクの削除"),
+                          content: Text("タスク「${task.name}」を削除しますか？"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Vibration.vibrate(duration: 10);
+                                Navigator.pop(context);
+                              },
+                              child: const Text("キャンセル"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Vibration.vibrate(duration: 10);
+                                Navigator.pop(context);
+                                setState(() {
+                                  deleteTask(task.id!);
+                                });
+                              },
+                              child: const Text("削除"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.delete_forever),
+                ),
               ),
-            ),
-            Positioned(
-              left: 10,
-              child: IconButton(
-                onPressed: () {
-                  Vibration.vibrate(duration: 10);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return MicoMiSubPage(
-                        editTask: task,
-                      );
-                    }),
-                  ).then((value) {
-                    _selectedTask = null;
-                    setState(() {});
-                  });
-                },
-                icon: const Icon(Icons.edit),
-              ),
-            )
-          ],
+              Positioned(
+                left: 10,
+                child: IconButton(
+                  onPressed: () {
+                    Vibration.vibrate(duration: 10);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return MicoMiSubPage(
+                          editTask: task,
+                        );
+                      }),
+                    ).then((value) {
+                      _selectedTask = null;
+                      setState(() {});
+                    });
+                  },
+                  icon: const Icon(Icons.edit),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

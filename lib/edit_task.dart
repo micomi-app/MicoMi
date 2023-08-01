@@ -104,10 +104,10 @@ class EditTasks extends State<MicoMiSubPage> {
                   isPrimary: false,
                   isRoundedSquare: true,
                   width: 300,
-                  onPressed: () => {
-                    isEdited = true,
-                    Vibration.vibrate(duration: 10),
-                    pickDateRange(context),
+                  onPressed: () {
+                    isEdited = true;
+                    Vibration.vibrate(duration: 10);
+                    pickDateRange(context);
                   },
                 ),
                 const CustomMargin(height: 20),
@@ -153,6 +153,7 @@ class EditTasks extends State<MicoMiSubPage> {
                                   TextButton(
                                     child: const Text("やめる"),
                                     onPressed: () {
+                                      Vibration.vibrate(duration: 10);
                                       Navigator.pop(context);
                                       Navigator.popUntil(
                                         context,
@@ -163,6 +164,7 @@ class EditTasks extends State<MicoMiSubPage> {
                                   TextButton(
                                     child: const Text("やめない"),
                                     onPressed: () {
+                                      Vibration.vibrate(duration: 10);
                                       Navigator.pop(context);
                                     },
                                   ),
