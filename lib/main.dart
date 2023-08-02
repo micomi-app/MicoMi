@@ -132,6 +132,26 @@ class CalendarPage extends State<MicoMiMainPage> {
             // カレンダー
             TableCalendar(
               calendarBuilders: CalendarBuilders(
+                selectedBuilder: (context, day, focusedDay) {
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  );
+                },
                 rangeStartBuilder: (context, day, focusedDay) {
                   return Center(
                     child: Container(
@@ -172,14 +192,9 @@ class CalendarPage extends State<MicoMiMainPage> {
                 },
               ),
               calendarStyle: CalendarStyle(
-                selectedDecoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).primaryColor,
-                ),
-                selectedTextStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
+                // ここに書いてもマーカーデザイン実装できるけど、
+                // フェードアニメーションがついて違和感ある感じになってしまうので
+                // 今回はCalendarBuildersで実装
                 todayDecoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
