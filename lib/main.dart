@@ -263,7 +263,7 @@ class CalendarPage extends State<MicoMiMainPage> {
         child: InkWell(
           onTap: () {
             Vibration.vibrate(duration: 10);
-            if (_selectedTask?.start != task.start && _selectedTask?.end != task.end) {
+            if (_selectedTask?.id != task.id) {
               setState(() {
                 _selectedTask = task;
               });

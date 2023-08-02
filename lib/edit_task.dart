@@ -32,8 +32,8 @@ class EditTasks extends State<MicoMiSubPage> {
       final DateTimeRange? newDateRange = await showDateRangePicker(
         context: context,
         initialDateRange: initialDateRange,
-        firstDate: DateTime.now(),
-        lastDate: DateTime(DateTime.now().year + 3),
+        firstDate: DateTime.utc(2010, 1, 1),
+        lastDate: DateTime.utc(9999, 12, 31),
         locale: Localizations.localeOf(context),
         builder: (BuildContext context, Widget? child) {
           return Theme(
