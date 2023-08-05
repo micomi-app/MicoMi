@@ -109,7 +109,7 @@ class CustomElevatedButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
               ? Theme.of(context).primaryColor
-              : Color.lerp(Theme.of(context).colorScheme.onBackground, Theme.of(context).colorScheme.background, 0.9)!,
+              : Theme.of(context).colorScheme.tertiary,
           foregroundColor: isPrimary ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
           shape: isRoundedSquare
               ? RoundedRectangleBorder(

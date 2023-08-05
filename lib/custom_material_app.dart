@@ -13,13 +13,15 @@ class CustomMaterialApp extends StatelessWidget {
       title: title,
       theme: ThemeData(
         primaryColor: const Color(0xff8daeb8),
-        colorScheme: const ColorScheme.light(
-          primary: Color(0xff8daeb8),
+        colorScheme: ColorScheme.light(
+          primary: const Color(0xff8daeb8),
           onPrimary: Colors.white,
-          secondary: Color(0xffc5e0e8),
+          secondary: const Color(0xffc5e0e8),
           onSecondary: Colors.black,
+          tertiary: Color.lerp(const Color(0xff333333), Colors.white, 0.9),
+          onTertiary: Colors.black,
           background: Colors.white,
-          onBackground: Color(0xff333333),
+          onBackground: const Color(0xff333333),
         ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
@@ -38,6 +40,8 @@ class CustomMaterialApp extends StatelessWidget {
           onPrimary: Colors.white,
           secondary: Color.lerp(const Color(0xff4e7682), Colors.black, 0.5)!,
           onSecondary: Colors.white,
+          tertiary: Color.lerp(Colors.black, Colors.white, 0.9),
+          onTertiary: Colors.black,
           background: Colors.black,
           onBackground: Colors.white,
         ),

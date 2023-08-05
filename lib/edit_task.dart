@@ -37,10 +37,7 @@ class EditTasks extends State<MicoMiSubPage> {
         locale: Localizations.localeOf(context),
         builder: (BuildContext context, Widget? child) {
           return Theme(
-            data: ThemeData(
-              colorScheme: Theme.of(context).colorScheme,
-              useMaterial3: true,
-            ),
+            data: Theme.of(context),
             child: child!,
           );
         },
@@ -79,9 +76,9 @@ class EditTasks extends State<MicoMiSubPage> {
                   ),
                   isUnderline: true,
                   isTextAlignCenter: true,
-                  onChanged: (value) => {
-                    isEdited = true,
-                    _taskName = value,
+                  onChanged: (value) {
+                    isEdited = true;
+                    _taskName = value;
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -96,7 +93,10 @@ class EditTasks extends State<MicoMiSubPage> {
                   isMultiline: true,
                   isUnderline: false,
                   hintText: "くわしく\n\n\n\n\n",
-                  onChanged: (value) => {isEdited = true, _taskDetail = value},
+                  onChanged: (value) {
+                    isEdited = true;
+                    _taskDetail = value;
+                  },
                 ),
                 const CustomMargin(height: 10),
                 CustomElevatedButton(
