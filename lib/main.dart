@@ -17,6 +17,7 @@ class Task {
     required this.detail,
     required this.start,
     required this.end,
+    required this.color,
   });
 
   final int? id;
@@ -24,12 +25,14 @@ class Task {
   final String detail;
   final DateTime start;
   final DateTime end;
+  final Color color;
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'detail': detail,
       'start': formatterForSQL.format(start),
       'end': formatterForSQL.format(end),
+      'color': color.value,
     };
   }
 }
@@ -38,7 +41,7 @@ final Future<Database> database = openDatabase(
   "tasks.db",
   onCreate: (db, version) {
     return db.execute(
-      'CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, detail TEXT, start TEXT, end TEXT)',
+      'CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, detail TEXT, start TEXT, end TEXT, color INTEGER)',
     );
   },
   version: 3,
@@ -81,6 +84,7 @@ Future<List<Task>> getTasks(String query) async {
       detail: maps[i]['detail'],
       start: DateTime.parse(maps[i]['start']),
       end: DateTime.parse(maps[i]['end']),
+      color: Color(maps[i]['color']),
     );
   });
 }
@@ -120,8 +124,8 @@ class CalendarPage extends State<MicoMiMainPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: theme(context).primary,
+        foregroundColor: theme(context).onPrimary,
         title: Text(widget.title),
       ),
       body: SingleChildScrollView(
@@ -140,13 +144,13 @@ class CalendarPage extends State<MicoMiMainPage> {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Theme.of(context).primaryColor,
+                        color: theme(context).primary,
                       ),
                       child: Text(
                         day.day.toString(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          color: theme(context).onPrimary,
                         ),
                       ),
                     ),
@@ -160,12 +164,12 @@ class CalendarPage extends State<MicoMiMainPage> {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: toSecondaryColorSL(context, _selectedTask?.color),
                       ),
                       child: Text(
                         day.day.toString(),
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSecondary,
+                          color: theme(context).onSecondary,
                         ),
                       ),
                     ),
@@ -179,12 +183,12 @@ class CalendarPage extends State<MicoMiMainPage> {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: toSecondaryColorSL(context, _selectedTask?.color),
                       ),
                       child: Text(
                         day.day.toString(),
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSecondary,
+                          color: theme(context).onSecondary,
                         ),
                       ),
                     ),
@@ -198,14 +202,14 @@ class CalendarPage extends State<MicoMiMainPage> {
                 todayDecoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Theme.of(context).primaryColor,
+                    color: theme(context).primary,
                     width: 1,
                   ),
                 ),
                 todayTextStyle: TextStyle(
-                  color: Theme.of(context).primaryColor,
+                  color: theme(context).primary,
                 ),
-                rangeHighlightColor: Theme.of(context).colorScheme.secondary,
+                rangeHighlightColor: toSecondaryColorSL(context, _selectedTask?.color) ?? theme(context).secondary,
               ),
               headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
@@ -246,7 +250,8 @@ class CalendarPage extends State<MicoMiMainPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
               },
-              future: getTasks("tasks WHERE start <= '${formatterForSQL.format(_selectedDay)}' AND end >= '${formatterForSQL.format(_selectedDay)}'"),
+              future: getTasks(
+                  "tasks WHERE start <= '${formatterForSQL.format(_selectedDay)}' AND end >= '${formatterForSQL.format(_selectedDay)}'"),
             ),
           ],
         ),
@@ -254,7 +259,7 @@ class CalendarPage extends State<MicoMiMainPage> {
 
       // タスク追加ボタン
       floatingActionButton: FloatingActionButton.extended(
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        foregroundColor: theme(context).onPrimary,
         onPressed: () {
           Vibration.vibrate(duration: 20);
           Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -274,7 +279,7 @@ class CalendarPage extends State<MicoMiMainPage> {
       width: 300,
       child: Card(
         clipBehavior: Clip.hardEdge,
-        color: Theme.of(context).colorScheme.secondary,
+        color: toSecondaryColorSL(context, task.color),
         child: InkWell(
           onTap: () {
             Vibration.vibrate(duration: 10);
@@ -300,14 +305,14 @@ class CalendarPage extends State<MicoMiMainPage> {
                     Text(
                       task.name,
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary,
+                        color: theme(context).onSecondary,
                       ),
                     ),
                     if (task.detail != "")
                       Text(
                         task.detail,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSecondary.withOpacity(0.7),
+                          color: theme(context).onSecondary.withOpacity(0.7),
                         ),
                       ),
                     const CustomMargin(height: 15),

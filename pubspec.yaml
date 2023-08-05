@@ -41,6 +41,7 @@ dependencies:
   intl: ^0.18.0
   vibration: ^1.8.1
   sqflite: ^2.3.0
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_lints: ^2.0.2

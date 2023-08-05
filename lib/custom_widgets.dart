@@ -1,5 +1,22 @@
 import 'package:flutter/material.dart';
 
+Color withNewHue(Color color, double hue) {
+  return HSLColor.fromColor(color).withHue(hue).toColor();
+}
+
+double getHue(Color color) {
+  return HSLColor.fromColor(color).hue;
+}
+
+ColorScheme theme(BuildContext context) {
+  return Theme.of(context).colorScheme;
+}
+
+Color? toSecondaryColorSL(BuildContext context, Color? color) {
+  if (color == null) return null;
+  return withNewHue(theme(context).secondary, getHue(color));
+}
+
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
@@ -44,23 +61,23 @@ class CustomTextField extends StatelessWidget {
           enabledBorder: isUnderline
               ? UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: theme(context).secondary,
                   ),
                 )
               : OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: theme(context).secondary,
                   ),
                 ),
           focusedBorder: isUnderline
               ? UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).primaryColor,
+                    color: theme(context).primary,
                   ),
                 )
               : OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: Theme.of(context).primaryColor,
+                    color: theme(context).primary,
                   ),
                 ),
         ),
@@ -89,13 +106,15 @@ class CustomElevatedButton extends StatelessWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    required this.isPrimary,
+    required this.color,
+    required this.textColor,
     this.width,
     required this.isRoundedSquare,
   });
 
   final String label;
-  final bool isPrimary;
+  final Color color;
+  final Color textColor;
   final bool isRoundedSquare;
   final double? width;
   final void Function()? onPressed;
@@ -107,10 +126,8 @@ class CustomElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary
-              ? Theme.of(context).primaryColor
-              : Theme.of(context).colorScheme.tertiary,
-          foregroundColor: isPrimary ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onBackground,
+          backgroundColor: color,
+          foregroundColor: textColor,
           shape: isRoundedSquare
               ? RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

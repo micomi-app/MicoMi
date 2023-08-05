@@ -18,10 +18,10 @@ class CustomMaterialApp extends StatelessWidget {
           onPrimary: Colors.white,
           secondary: const Color(0xffc5e0e8),
           onSecondary: Colors.black,
-          tertiary: Color.lerp(const Color(0xff333333), Colors.white, 0.9),
+          tertiary: Color.lerp(Colors.black, Colors.white, 0.9),
           onTertiary: Colors.black,
           background: Colors.white,
-          onBackground: const Color(0xff333333),
+          onBackground: Colors.black,
         ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
@@ -40,8 +40,8 @@ class CustomMaterialApp extends StatelessWidget {
           onPrimary: Colors.white,
           secondary: Color.lerp(const Color(0xff4e7682), Colors.black, 0.5)!,
           onSecondary: Colors.white,
-          tertiary: Color.lerp(Colors.black, Colors.white, 0.9),
-          onTertiary: Colors.black,
+          tertiary: Color.lerp(Colors.white, Colors.black, 0.9),
+          onTertiary: Colors.white,
           background: Colors.black,
           onBackground: Colors.white,
         ),

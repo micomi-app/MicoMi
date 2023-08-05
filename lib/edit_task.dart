@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vibration/vibration.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'custom_widgets.dart';
 import 'main.dart';
 
@@ -14,9 +15,12 @@ class MicoMiSubPage extends StatefulWidget {
 }
 
 class EditTasks extends State<MicoMiSubPage> {
-  late DateTimeRange? _taskDateRange = widget.editTask == null ? null : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);
-  late String? _taskName = widget.editTask?.name;
-  late String? _taskDetail = widget.editTask?.detail;
+  late DateTimeRange? _taskDateRange = widget.editTask == null
+      ? null
+      : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);
+  late String _taskName = widget.editTask?.name ?? "";
+  late String _taskDetail = widget.editTask?.detail ?? "";
+  late Color _taskColor = widget.editTask?.color ?? withNewHue(theme(context).secondary, 0);
   bool isEdited = false;
 
   @override
@@ -56,8 +60,8 @@ class EditTasks extends State<MicoMiSubPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: theme(context).primary,
+        foregroundColor: theme(context).onPrimary,
         title: const Text("タスクの追加/編集"),
       ),
       body: Center(
@@ -100,8 +104,11 @@ class EditTasks extends State<MicoMiSubPage> {
                 ),
                 const CustomMargin(height: 10),
                 CustomElevatedButton(
-                  label: _taskDateRange == null ? "期間を決める" : "${formatter.format(_taskDateRange!.start)} ～ ${formatter.format(_taskDateRange!.end)}",
-                  isPrimary: false,
+                  label: _taskDateRange == null
+                      ? "期間を決める"
+                      : "${formatter.format(_taskDateRange!.start)} ～ ${formatter.format(_taskDateRange!.end)}",
+                  color: theme(context).tertiary,
+                  textColor: theme(context).onTertiary,
                   isRoundedSquare: true,
                   width: 300,
                   onPressed: () {
@@ -110,23 +117,74 @@ class EditTasks extends State<MicoMiSubPage> {
                     pickDateRange(context);
                   },
                 ),
+                const CustomMargin(height: 10),
+                CustomElevatedButton(
+                  label: "色を決める",
+                  color: toSecondaryColorSL(context, _taskColor)!,
+                  textColor: theme(context).onSecondary,
+                  isRoundedSquare: true,
+                  width: 300,
+                  onPressed: () {
+                    isEdited = true;
+                    Vibration.vibrate(duration: 10);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("色を選んでください"),
+                          content: SingleChildScrollView(
+                            child: ClipRect(
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                heightFactor: 0.36,
+                                child: BlockPicker(
+                                  pickerColor: _taskColor,
+                                  onColorChanged: (color) {
+                                    setState(() {
+                                      _taskColor = color;
+                                    });
+                                  },
+                                  availableColors: [
+                                    for (double i = 0; i < 8; i++)
+                                      withNewHue(theme(context).primary, 45 * i),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text("決定"),
+                              onPressed: () {
+                                Vibration.vibrate(duration: 10);
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
                 const CustomMargin(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CustomElevatedButton(
                       label: "決定！",
-                      isPrimary: true,
+                      color: theme(context).primary,
+                      textColor: theme(context).onPrimary,
                       isRoundedSquare: false,
                       onPressed: () {
                         Vibration.vibrate(duration: 10);
                         if (formKey.currentState!.validate()) {
                           insertTask(Task(
                             id: widget.editTask?.id,
-                            name: _taskName!,
-                            detail: _taskDetail ?? "",
+                            name: _taskName,
+                            detail: _taskDetail,
                             start: _taskDateRange!.start,
                             end: _taskDateRange!.end,
+                            color: _taskColor,
                           ));
                           Navigator.popUntil(
                             context,
@@ -138,7 +196,8 @@ class EditTasks extends State<MicoMiSubPage> {
                     const CustomMargin(width: 10),
                     CustomElevatedButton(
                       label: "やっぱやめる",
-                      isPrimary: false,
+                      color: theme(context).tertiary,
+                      textColor: theme(context).onTertiary,
                       isRoundedSquare: false,
                       onPressed: () {
                         Vibration.vibrate(duration: 10);
