@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'edit_task.dart';
 import 'custom_material_app.dart';
 import 'custom_widgets.dart';
+import 'custom_functions.dart';
 
 DateFormat formatterForSQL = DateFormat('yyyy-MM-dd');
 
