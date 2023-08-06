@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.initialValue,
+    this.borderColor,
   });
 
   final String? initialValue;
@@ -24,6 +25,7 @@ class CustomTextField extends StatelessWidget {
   final bool isUnderline;
   final void Function(String)? onChanged;
   final String? Function(String?)? validator;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +47,23 @@ class CustomTextField extends StatelessWidget {
           enabledBorder: isUnderline
               ? UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: theme(context).secondary,
+                    color: toSecondaryColorSL(context, borderColor) ?? theme(context).secondary,
                   ),
                 )
               : OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: theme(context).secondary,
+                    color: toSecondaryColorSL(context, borderColor) ?? theme(context).secondary,
                   ),
                 ),
           focusedBorder: isUnderline
               ? UnderlineInputBorder(
                   borderSide: BorderSide(
-                    color: theme(context).primary,
+                    color: borderColor ?? theme(context).primary,
                   ),
                 )
               : OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: theme(context).primary,
+                    color: borderColor ?? theme(context).primary,
                   ),
                 ),
         ),
@@ -92,6 +94,7 @@ class CustomElevatedButton extends StatelessWidget {
     required this.onPressed,
     required this.color,
     required this.textColor,
+    this.borderColor,
     this.width,
     required this.isRoundedSquare,
   });
@@ -99,6 +102,7 @@ class CustomElevatedButton extends StatelessWidget {
   final String label;
   final Color color;
   final Color textColor;
+  final Color? borderColor;
   final bool isRoundedSquare;
   final double? width;
   final void Function()? onPressed;
@@ -115,8 +119,16 @@ class CustomElevatedButton extends StatelessWidget {
           shape: isRoundedSquare
               ? RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                    color: borderColor ?? Colors.transparent,
+                  ),
                 )
-              : null,
+              : RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9999),
+                  side: BorderSide(
+                    color: borderColor ?? Colors.transparent,
+                  ),
+                ),
         ),
         child: Text(label),
       ),

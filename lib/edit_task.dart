@@ -21,7 +21,7 @@ class EditTasks extends State<MicoMiSubPage> {
       : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);
   late String _taskName = widget.editTask?.name ?? "";
   late String _taskDetail = widget.editTask?.detail ?? "";
-  late Color _taskColor = widget.editTask?.color ?? withNewHue(theme(context).secondary, 0);
+  late Color _taskColor = widget.editTask?.color ?? withNewHue(theme(context).primary, 0);
   bool isEdited = false;
 
   @override
@@ -61,7 +61,7 @@ class EditTasks extends State<MicoMiSubPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: theme(context).primary,
+        backgroundColor: _taskColor,
         foregroundColor: theme(context).onPrimary,
         title: const Text("タスクの追加/編集"),
       ),
@@ -79,6 +79,7 @@ class EditTasks extends State<MicoMiSubPage> {
                   textStyle: TextStyle(
                     fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
                   ),
+                  borderColor: _taskColor,
                   isUnderline: true,
                   isTextAlignCenter: true,
                   onChanged: (value) {
@@ -96,6 +97,7 @@ class EditTasks extends State<MicoMiSubPage> {
                 CustomTextField(
                   initialValue: _taskDetail,
                   isMultiline: true,
+                  borderColor: _taskColor,
                   isUnderline: false,
                   hintText: "くわしく\n\n\n\n\n",
                   onChanged: (value) {
@@ -121,8 +123,8 @@ class EditTasks extends State<MicoMiSubPage> {
                 const CustomMargin(height: 10),
                 CustomElevatedButton(
                   label: "色を決める",
-                  color: toSecondaryColorSL(context, _taskColor)!,
-                  textColor: theme(context).onSecondary,
+                  color: theme(context).tertiary,
+                  textColor: theme(context).onTertiary,
                   isRoundedSquare: true,
                   width: 300,
                   onPressed: () {
@@ -173,7 +175,7 @@ class EditTasks extends State<MicoMiSubPage> {
                   children: [
                     CustomElevatedButton(
                       label: "決定！",
-                      color: theme(context).primary,
+                      color: _taskColor,
                       textColor: theme(context).onPrimary,
                       isRoundedSquare: false,
                       onPressed: () {
