@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -99,6 +100,12 @@ class MicoMiMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [SystemUiOverlay.top]).then((_) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarDividerColor: Colors.transparent,
+      ));
+    });
     return const CustomMaterialApp(
       title: 'MicoMi',
       home: MicoMiMainPage(title: 'MicoMi'),
@@ -123,6 +130,7 @@ class CalendarPage extends State<MicoMiMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: theme(context).primary,
@@ -244,7 +252,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                   return Column(
                     children: [
                       for (final task in snapshot.data!) taskCard(task),
-                      const CustomMargin(height: 80),
+                      const CustomMargin(height: 170),
                     ],
                   );
                 } else {
@@ -272,6 +280,29 @@ class CalendarPage extends State<MicoMiMainPage> {
         label: const Text("タスクを追加"),
         icon: const Icon(Icons.add),
       ),
+
+      bottomNavigationBar: NavigationBar(
+        backgroundColor: theme(context).background.withOpacity(0.5),
+        height: 60,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.calendar_month),
+            label: "カレンダー",
+            selectedIcon: Icon(Icons.calendar_month),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.checklist),
+            label: "タスク一覧",
+            selectedIcon: Icon(Icons.checklist),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings),
+            label: "設定",
+            selectedIcon: Icon(Icons.settings),
+          ),
+        ],
+      )
     );
   }
 
