@@ -67,18 +67,22 @@ Future<void> insertTask(Task task) async {
   }
 }
 
-Future<void> deleteTask(int id) async {
+Future<void> deleteTask(Task task) async {
   final Database db = await database;
   await db.delete(
     'tasks',
     where: "id = ?",
-    whereArgs: [id],
+    whereArgs: [task.id],
   );
 }
 
-Future<List<Task>> getTasks(String query) async {
+Future<List<Task>> getTasks(String query, List? whereArgs) async {
   final Database db = await database;
-  final List<Map<String, dynamic>> maps = await db.query(query);
+  final List<Map<String, dynamic>> maps = await db.query(
+    'tasks',
+    where: query,
+    whereArgs: whereArgs,
+  );
   return List.generate(maps.length, (i) {
     return Task(
       id: maps[i]['id'],
@@ -218,7 +222,8 @@ class CalendarPage extends State<MicoMiMainPage> {
                 todayTextStyle: TextStyle(
                   color: theme(context).primary,
                 ),
-                rangeHighlightColor: toSecondaryColorSL(context, _selectedTask?.color) ?? theme(context).secondary,
+                rangeHighlightColor:
+                    toSecondaryColorSL(context, _selectedTask?.color) ?? theme(context).secondary,
               ),
               headerStyle: const HeaderStyle(
                 formatButtonVisible: false,
@@ -260,7 +265,9 @@ class CalendarPage extends State<MicoMiMainPage> {
                 }
               },
               future: getTasks(
-                  "tasks WHERE start <= '${formatterForSQL.format(_selectedDay)}' AND end >= '${formatterForSQL.format(_selectedDay)}'"),
+                "start <= ? AND end >= ?",
+                [formatterForSQL.format(_selectedDay), formatterForSQL.format(_selectedDay)],
+              ),
             ),
           ],
         ),
@@ -280,7 +287,6 @@ class CalendarPage extends State<MicoMiMainPage> {
         label: const Text("タスクを追加"),
         icon: const Icon(Icons.add),
       ),
-
       bottomNavigationBar: NavigationBar(
         backgroundColor: theme(context).background.withOpacity(0.5),
         height: 60,
@@ -302,7 +308,7 @@ class CalendarPage extends State<MicoMiMainPage> {
             selectedIcon: Icon(Icons.settings),
           ),
         ],
-      )
+      ),
     );
   }
 
@@ -375,7 +381,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                                 Vibration.vibrate(duration: 10);
                                 Navigator.pop(context);
                                 setState(() {
-                                  deleteTask(task.id!);
+                                  deleteTask(task);
                                 });
                               },
                               child: const Text("削除"),
