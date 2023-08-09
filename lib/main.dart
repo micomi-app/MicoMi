@@ -288,7 +288,7 @@ class CalendarPage extends State<MicoMiMainPage> {
         icon: const Icon(Icons.add),
       ),
       bottomNavigationBar: NavigationBar(
-        backgroundColor: theme(context).background.withOpacity(0.5),
+        backgroundColor: theme(context).background.withOpacity(0.7),
         height: 60,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         destinations: const [
