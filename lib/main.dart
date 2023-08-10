@@ -295,16 +295,19 @@ class CalendarPage extends State<MicoMiMainPage> {
           NavigationDestination(
             icon: Icon(Icons.calendar_month),
             label: "カレンダー",
+            tooltip: "カレンダー",
             selectedIcon: Icon(Icons.calendar_month),
           ),
           NavigationDestination(
             icon: Icon(Icons.checklist),
             label: "タスク一覧",
+            tooltip: "タスク一覧",
             selectedIcon: Icon(Icons.checklist),
           ),
           NavigationDestination(
             icon: Icon(Icons.settings),
             label: "設定",
+            tooltip: "設定",
             selectedIcon: Icon(Icons.settings),
           ),
         ],
