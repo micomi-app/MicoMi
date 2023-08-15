@@ -4,7 +4,6 @@ import 'package:vibration/vibration.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'custom_widgets.dart';
 import 'custom_functions.dart';
-import 'main.dart';
 
 class MicoMiSubPage extends StatefulWidget {
   const MicoMiSubPage({super.key, this.editTask});
@@ -148,8 +147,7 @@ class EditTasks extends State<MicoMiSubPage> {
                                     });
                                   },
                                   availableColors: [
-                                    for (double i = 0; i < 8; i++)
-                                      withNewHue(theme(context).primary, 45 * i),
+                                    for (double i = 0; i < 8; i++) withNewHue(theme(context).primary, 45 * i),
                                   ],
                                 ),
                               ),
