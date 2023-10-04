@@ -25,13 +25,16 @@ class EditTasks extends State<MicoMiSubPage> {
 
   @override
   Widget build(BuildContext context) {
+    DateFormat formatter = DateFormat('yyyy/MM/dd(E)', Localizations.localeOf(context).toString());
+
+    final formKey = GlobalKey<FormState>();
+
     Future pickDateRange(BuildContext context) async {
-      final DateTimeRange initialDateRange = _taskDateRange == null
-          ? DateTimeRange(
-              start: DateTime.now(),
-              end: DateTime.now().add(const Duration(days: 1)),
-            )
-          : _taskDateRange!;
+      final DateTimeRange initialDateRange = _taskDateRange ??
+          DateTimeRange(
+            start: DateTime.now(),
+            end: DateTime.now().add(const Duration(days: 1)),
+          );
 
       final DateTimeRange? newDateRange = await showDateRangePicker(
         context: context,
@@ -53,7 +56,7 @@ class EditTasks extends State<MicoMiSubPage> {
       }
     }
 
-    void confirmCancel(BuildContext context) async {
+    void confirmCancel(BuildContext context) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -62,6 +65,9 @@ class EditTasks extends State<MicoMiSubPage> {
             content: const Text("本当にやめますか？\n入力した内容は保存されません。"),
             actions: <Widget>[
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: theme(context).error,
+                ),
                 child: const Text("やめる"),
                 onPressed: () {
                   Vibration.vibrate(duration: 10);
@@ -84,10 +90,6 @@ class EditTasks extends State<MicoMiSubPage> {
         },
       );
     }
-
-    DateFormat formatter = DateFormat('yyyy/MM/dd(E)', Localizations.localeOf(context).toString());
-
-    final formKey = GlobalKey<FormState>();
 
     return WillPopScope(
       onWillPop: () {
@@ -224,6 +226,27 @@ class EditTasks extends State<MicoMiSubPage> {
                         onPressed: () {
                           Vibration.vibrate(duration: 10);
                           if (formKey.currentState!.validate()) {
+                            if (_taskDateRange == null) {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text("確認"),
+                                    content: const Text("期間を決めてください。"),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: const Text("わかった"),
+                                        onPressed: () {
+                                          Vibration.vibrate(duration: 10);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                              return;
+                            }
                             insertTask(Task(
                               id: widget.editTask?.id,
                               name: _taskName,
