@@ -85,12 +85,13 @@ Future<void> deleteTask(Task task) async {
   );
 }
 
-Future<List<Task>> getTasks(String query, List? whereArgs) async {
+Future<List<Task>> getTasks(String where, List? whereArgs, [String? orderBy]) async {
   final Database db = await database;
   final List<Map<String, dynamic>> maps = await db.query(
     'tasks',
-    where: query,
+    where: where,
     whereArgs: whereArgs,
+    orderBy: orderBy,
   );
   return List.generate(maps.length, (i) {
     return Task(

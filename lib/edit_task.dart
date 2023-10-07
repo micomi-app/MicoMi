@@ -5,16 +5,16 @@ import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'custom_widgets.dart';
 import 'custom_functions.dart';
 
-class MicoMiSubPage extends StatefulWidget {
-  const MicoMiSubPage({super.key, this.editTask});
+class EditPage extends StatefulWidget {
+  const EditPage({super.key, this.editTask});
 
   final Task? editTask;
 
   @override
-  State<MicoMiSubPage> createState() => EditTasks();
+  State<EditPage> createState() => EditPageState();
 }
 
-class EditTasks extends State<MicoMiSubPage> {
+class EditPageState extends State<EditPage> {
   late DateTimeRange? _taskDateRange = widget.editTask == null
       ? null
       : DateTimeRange(start: widget.editTask!.start, end: widget.editTask!.end);

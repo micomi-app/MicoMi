@@ -12,8 +12,8 @@ class CustomMaterialApp extends StatelessWidget {
     return MaterialApp(
       title: title,
       theme: ThemeData(
-        primaryColor: const Color(0xff8daeb8),
-        colorScheme: ColorScheme.light(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xff8daeb8),
           primary: const Color(0xff8daeb8),
           onPrimary: Colors.white,
           secondary: const Color(0xffc5e0e8),
@@ -22,6 +22,7 @@ class CustomMaterialApp extends StatelessWidget {
           onTertiary: Colors.black,
           background: Colors.white,
           onBackground: Colors.black,
+          brightness: Brightness.light,
         ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
@@ -29,13 +30,13 @@ class CustomMaterialApp extends StatelessWidget {
             color: Color(0xff333333),
           ),
         ),
-        brightness: Brightness.light,
         useMaterial3: true,
         fontFamily: "Noto Sans JP",
       ),
       darkTheme: ThemeData(
         primaryColor: const Color(0xff4e7682),
-        colorScheme: ColorScheme.dark(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xff4e7682),
           primary: const Color(0xff4e7682),
           onPrimary: Colors.white,
           secondary: Color.lerp(const Color(0xff4e7682), Colors.black, 0.5)!,
@@ -44,6 +45,7 @@ class CustomMaterialApp extends StatelessWidget {
           onTertiary: Colors.white,
           background: Colors.black,
           onBackground: Colors.white,
+          brightness: Brightness.dark,
         ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(
@@ -51,7 +53,6 @@ class CustomMaterialApp extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        brightness: Brightness.dark,
         useMaterial3: true,
         fontFamily: "Noto Sans JP",
       ),

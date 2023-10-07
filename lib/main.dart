@@ -3,17 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vibration/vibration.dart';
+import 'package:navigator_scope/navigator_scope.dart';
 import 'edit_task.dart';
 import 'custom_material_app.dart';
 import 'custom_widgets.dart';
 import 'custom_functions.dart';
 
 void main() {
-  initializeDateFormatting().then((_) => runApp(const MicoMiMain()));
+  initializeDateFormatting().then((_) => runApp(const Main()));
 }
 
-class MicoMiMain extends StatelessWidget {
-  const MicoMiMain({super.key});
+class Main extends StatelessWidget {
+  const Main({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,36 +26,43 @@ class MicoMiMain extends StatelessWidget {
     });
     return const CustomMaterialApp(
       title: 'MicoMi',
-      home: MicoMiMainPage(title: 'MicoMi'),
+      home: MainPage(title: 'MicoMi'),
     );
   }
 }
 
-class MicoMiMainPage extends StatefulWidget {
-  const MicoMiMainPage({super.key, required this.title});
+class MainPage extends StatefulWidget {
+  const MainPage({super.key, required this.title});
 
   final String title;
 
+  // pageに基づいてStateを返す
   @override
-  State<MicoMiMainPage> createState() => CalendarPage();
+  State<StatefulWidget> createState() => MainPageState();
 }
 
-class CalendarPage extends State<MicoMiMainPage> {
+class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   Task? _selectedTask;
+  int _currentDestination = 0;
+  String _orderBy = "id";
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 300),
+  )..forward();
+  late final Animation<double> _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: theme(context).primary,
-        foregroundColor: theme(context).onPrimary,
-        title: Text(widget.title),
-      ),
-      body: SingleChildScrollView(
+    List<Widget> pages = [
+      SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -185,14 +193,116 @@ class CalendarPage extends State<MicoMiMainPage> {
           ],
         ),
       ),
+      FutureBuilder(
+        builder: (context, AsyncSnapshot<List<Task>> snapshot) {
+          if (snapshot.hasData) {
+            return Stack(
+              fit: StackFit.expand,
+              alignment: Alignment.center,
+              children: [
+                SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      children: [
+                        const CustomMargin(height: 20),
+                        for (final task in snapshot.data!) taskCard(task),
+                        if (snapshot.data!.isEmpty)
+                          const Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.info_outline),
+                              CustomMargin(width: 10),
+                              Text(
+                                "タスクはありません",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 170,
+                  child: DropdownButton(
+                    items: const [
+                      DropdownMenuItem(
+                        value: "id",
+                        child: Text("追加が新しい順"),
+                      ),
+                      DropdownMenuItem(
+                        value: "id DESC",
+                        child: Text("追加が古い順"),
+                      ),
+                      DropdownMenuItem(
+                        value: "color",
+                        child: Text("色順"),
+                      ),
+                      DropdownMenuItem(
+                        value: "name",
+                        child: Text("タスク名順"),
+                      ),
+                      DropdownMenuItem(
+                        value: "start",
+                        child: Text("開始日が古い順"),
+                      ),
+                      DropdownMenuItem(
+                        value: "end",
+                        child: Text("終了日が古い順"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      Vibration.vibrate(duration: 10);
+                      setState(() {
+                        _orderBy = value!;
+                      });
+                    },
+                    value: _orderBy,
+                  ),
+                )
+              ],
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+        future: getTasks("1", [], _orderBy),
+      ),
+      const Center(
+        child: Text("設定"),
+      ),
+    ];
+
+    return Scaffold(
+      extendBody: true,
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: theme(context).primary,
+        foregroundColor: theme(context).onPrimary,
+        title: Text(widget.title),
+      ),
+      body: NavigatorScope(
+        currentDestination: _currentDestination,
+        destinationCount: 3,
+        destinationBuilder: (context, index) {
+          return FadeTransition(
+            opacity: _animation,
+            child: pages[index],
+          );
+        },
+      ),
 
       // タスク追加ボタン
       floatingActionButton: FloatingActionButton.extended(
         foregroundColor: theme(context).onPrimary,
+        backgroundColor: theme(context).primary,
         onPressed: () {
           Vibration.vibrate(duration: 20);
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return const MicoMiSubPage();
+            return const EditPage();
           })).then((value) {
             setState(() {});
           });
@@ -202,6 +312,15 @@ class CalendarPage extends State<MicoMiMainPage> {
       ),
 
       bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentDestination,
+        onDestinationSelected: (index) {
+          Vibration.vibrate(duration: 10);
+          setState(() {
+            _currentDestination = index;
+            _controller.reset();
+            _controller.forward();
+          });
+        },
         backgroundColor: theme(context).background.withOpacity(0.7),
         height: 60,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
@@ -266,6 +385,8 @@ class CalendarPage extends State<MicoMiMainPage> {
                     if (task.detail != "")
                       Text(
                         task.detail,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                         style: TextStyle(
                           color: theme(context).onSecondary.withOpacity(0.7),
                         ),
@@ -319,7 +440,7 @@ class CalendarPage extends State<MicoMiMainPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
-                        return MicoMiSubPage(
+                        return EditPage(
                           editTask: task,
                         );
                       }),
