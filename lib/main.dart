@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:vibration/vibration.dart';
 import 'package:navigator_scope/navigator_scope.dart';
+import 'package:simple_animations/simple_animations.dart';
 import 'edit_task.dart';
 import 'custom_material_app.dart';
 import 'custom_widgets.dart';
@@ -41,27 +42,18 @@ class MainPage extends StatefulWidget {
   State<StatefulWidget> createState() => MainPageState();
 }
 
-class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+class MainPageState extends State<MainPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   Task? _selectedTask;
   int _currentDestination = 0;
   String _orderBy = "id";
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 300),
-  )..forward();
-  late final Animation<double> _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  Control control = Control.play;
 
   @override
   Widget build(BuildContext context) {
     List<Widget> pages = [
+      // *****************************カレンダー*****************************
       SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -193,6 +185,8 @@ class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin 
           ],
         ),
       ),
+
+      // *****************************タスク一覧*****************************
       FutureBuilder(
         builder: (context, AsyncSnapshot<List<Task>> snapshot) {
           if (snapshot.hasData) {
@@ -205,7 +199,29 @@ class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin 
                     child: Column(
                       children: [
                         const CustomMargin(height: 20),
-                        for (final task in snapshot.data!) taskCard(task),
+                        for (final task in snapshot.data!)
+                          CustomAnimationBuilder(
+                            control: control,
+                            tween: Tween<double>(begin: 0, end: 1),
+                            duration: const Duration(milliseconds: 150),
+                            curve: Curves.easeOutCubic,
+                            builder: (context, value, child) {
+                              return Transform.translate(
+                                offset: Offset(0, 50 * (1 - value)),
+                                child: Opacity(
+                                  opacity: value,
+                                  child: taskCard(task),
+                                ),
+                              );
+                            },
+                            onCompleted: () {
+                              if (control == Control.playReverse) {
+                                setState(() {
+                                  control = Control.play;
+                                });
+                              }
+                            },
+                          ),
                         if (snapshot.data!.isEmpty)
                           const Row(
                             mainAxisSize: MainAxisSize.max,
@@ -257,6 +273,7 @@ class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin 
                     onChanged: (value) {
                       Vibration.vibrate(duration: 10);
                       setState(() {
+                        control = Control.playReverse;
                         _orderBy = value!;
                       });
                     },
@@ -288,10 +305,7 @@ class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin 
         currentDestination: _currentDestination,
         destinationCount: 3,
         destinationBuilder: (context, index) {
-          return FadeTransition(
-            opacity: _animation,
-            child: pages[index],
-          );
+          return pages[index];
         },
       ),
 
@@ -317,8 +331,6 @@ class MainPageState extends State<MainPage> with SingleTickerProviderStateMixin 
           Vibration.vibrate(duration: 10);
           setState(() {
             _currentDestination = index;
-            _controller.reset();
-            _controller.forward();
           });
         },
         backgroundColor: theme(context).background.withOpacity(0.7),
