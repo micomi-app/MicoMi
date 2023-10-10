@@ -57,7 +57,7 @@ class MainPageState extends State<MainPage> {
       SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
+          children: [
             const CustomMargin(height: 20),
             // カレンダー
             TableCalendar(
@@ -169,7 +169,22 @@ class MainPageState extends State<MainPage> {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
-                      for (final task in snapshot.data!) taskCard(task),
+                      for (final task in snapshot.data!)
+                        taskCard(
+                          task: task,
+                          onTap: () {
+                            Vibration.vibrate(duration: 10);
+                            if (_selectedTask?.id != task.id) {
+                              setState(() {
+                                _selectedTask = task;
+                              });
+                            } else {
+                              setState(() {
+                                _selectedTask = null;
+                              });
+                            }
+                          },
+                        ),
                       const CustomMargin(height: 170),
                     ],
                   );
@@ -188,106 +203,113 @@ class MainPageState extends State<MainPage> {
 
       // *****************************タスク一覧*****************************
       FutureBuilder(
+        future: getTasks("1", [], _orderBy),
         builder: (context, AsyncSnapshot<List<Task>> snapshot) {
           if (snapshot.hasData) {
-            return Stack(
-              fit: StackFit.expand,
-              alignment: Alignment.center,
-              children: [
-                SingleChildScrollView(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        const CustomMargin(height: 20),
-                        for (final task in snapshot.data!)
-                          CustomAnimationBuilder(
-                            control: control,
-                            tween: Tween<double>(begin: 0, end: 1),
-                            duration: const Duration(milliseconds: 150),
-                            curve: Curves.easeOutCubic,
-                            builder: (context, value, child) {
-                              return Transform.translate(
-                                offset: Offset(0, 50 * (1 - value)),
-                                child: Opacity(
-                                  opacity: value,
-                                  child: taskCard(task),
-                                ),
-                              );
-                            },
-                            onCompleted: () {
-                              if (control == Control.playReverse) {
-                                setState(() {
-                                  control = Control.play;
-                                });
-                              }
-                            },
-                          ),
-                        if (snapshot.data!.isEmpty)
-                          const Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.info_outline),
-                              CustomMargin(width: 10),
-                              Text(
-                                "タスクはありません",
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
+            return SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CustomMargin(height: MediaQuery.of(context).size.height / 5),
+                    DropdownButton(
+                      items: const [
+                        DropdownMenuItem(
+                          value: "id DESC",
+                          child: Text("追加が新しい順"),
+                        ),
+                        DropdownMenuItem(
+                          value: "id",
+                          child: Text("追加が古い順"),
+                        ),
+                        DropdownMenuItem(
+                          value: "color",
+                          child: Text("色順"),
+                        ),
+                        DropdownMenuItem(
+                          value: "name",
+                          child: Text("タスク名順"),
+                        ),
+                        DropdownMenuItem(
+                          value: "start",
+                          child: Text("開始日が古い順"),
+                        ),
+                        DropdownMenuItem(
+                          value: "end",
+                          child: Text("終了日が古い順"),
+                        ),
                       ],
+                      onChanged: (value) {
+                        Vibration.vibrate(duration: 10);
+                        setState(() {
+                          control = Control.playReverse;
+                          _orderBy = value!;
+                        });
+                      },
+                      value: _orderBy,
                     ),
-                  ),
+                    CustomAnimationBuilder(
+                      control: control,
+                      tween: Tween<double>(begin: 0, end: 1),
+                      duration: const Duration(milliseconds: 150),
+                      curve: Curves.easeOutCubic,
+                      builder: (context, value, child) {
+                        return Transform.translate(
+                          offset: Offset(0, 50 * (1 - value)),
+                          child: Opacity(
+                            opacity: value,
+                            child: Column(
+                              children: [
+                                for (final task in snapshot.data!)
+                                  taskCard(
+                                    task: task,
+                                    onLongPress: () {
+                                      setState(() {
+                                        _currentDestination = 0;
+                                        _selectedTask = task;
+                                      });
+                                    },
+                                  )
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      onCompleted: () {
+                        if (control == Control.playReverse) {
+                          setState(() {
+                            control = Control.play;
+                          });
+                        }
+                      },
+                    ),
+                    if (snapshot.data!.isEmpty)
+                      const Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.info_outline),
+                          CustomMargin(width: 10),
+                          Text(
+                            "タスクはありません",
+                            style: TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    const CustomMargin(height: 170),
+                  ],
                 ),
-                Positioned(
-                  bottom: 170,
-                  child: DropdownButton(
-                    items: const [
-                      DropdownMenuItem(
-                        value: "id",
-                        child: Text("追加が新しい順"),
-                      ),
-                      DropdownMenuItem(
-                        value: "id DESC",
-                        child: Text("追加が古い順"),
-                      ),
-                      DropdownMenuItem(
-                        value: "color",
-                        child: Text("色順"),
-                      ),
-                      DropdownMenuItem(
-                        value: "name",
-                        child: Text("タスク名順"),
-                      ),
-                      DropdownMenuItem(
-                        value: "start",
-                        child: Text("開始日が古い順"),
-                      ),
-                      DropdownMenuItem(
-                        value: "end",
-                        child: Text("終了日が古い順"),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      Vibration.vibrate(duration: 10);
-                      setState(() {
-                        control = Control.playReverse;
-                        _orderBy = value!;
-                      });
-                    },
-                    value: _orderBy,
-                  ),
-                )
-              ],
+              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
           }
         },
-        future: getTasks("1", [], _orderBy),
       ),
+
+      // *****************************設定*****************************
       const Center(
         child: Text("設定"),
       ),
@@ -360,7 +382,7 @@ class MainPageState extends State<MainPage> {
     );
   }
 
-  Widget taskCard(Task task) {
+  Widget taskCard({required Task task, void Function()? onTap, void Function()? onLongPress}) {
     return SizedBox(
       width: 300,
       child: Card(
@@ -369,15 +391,11 @@ class MainPageState extends State<MainPage> {
         child: InkWell(
           onTap: () {
             Vibration.vibrate(duration: 10);
-            if (_selectedTask?.id != task.id) {
-              setState(() {
-                _selectedTask = task;
-              });
-            } else {
-              setState(() {
-                _selectedTask = null;
-              });
-            }
+            onTap?.call();
+          },
+          onLongPress: () {
+            Vibration.vibrate(duration: 10);
+            onLongPress?.call();
           },
           child: Stack(
             alignment: Alignment.center,
