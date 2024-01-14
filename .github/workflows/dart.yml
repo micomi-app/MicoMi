@@ -26,3 +26,8 @@ jobs:
 
       - name: Format dart
         run: dart format /lib --line-length=110
+        
+      - name: Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Apply Code Formatter Change
