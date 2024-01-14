@@ -39,6 +39,9 @@ jobs:
       - name: Build APK
         run: flutter build apk
 
+      - name: Ignore .gitignore
+        run: rm -rf .gitignore
+
       - name: Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
