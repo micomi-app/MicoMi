@@ -61,7 +61,7 @@ class CustomMaterialApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('ja', ''), Locale('en', '')],
+      supportedLocales: const [Locale('ja', 'JP')],
       themeMode: ThemeMode.system,
       home: home,
     );
