@@ -456,7 +456,7 @@ class MainPageState extends State<MainPage> {
                                 Vibration.vibrate(duration: 10);
                                 Navigator.pop(context);
                                 setState(() {
-                                  deleteTask(task);
+                                  task.delete();
                                 });
                               },
                               child: const Text("削除"),

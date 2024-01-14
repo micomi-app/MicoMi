@@ -21,6 +21,26 @@ Color? toSecondaryColorSL(BuildContext context, Color? color) {
 
 DateFormat formatterForSQL = DateFormat('yyyy-MM-dd');
 
+
+final Future<Database> database = openDatabase(
+  "tasks.db",
+  onCreate: (db, version) {
+    return db.execute(
+      'CREATE TABLE tasks('
+          'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
+          'isHomework INTEGER,'
+          'totalPages INTEGER,'
+          'name TEXT,'
+          'detail TEXT,'
+          'start TEXT,'
+          'end TEXT,'
+          'color INTEGER'
+          ')',
+    );
+  },
+  version: 3,
+);
+
 class Task {
   Task({
     this.id,
@@ -52,52 +72,32 @@ class Task {
       'color': color.value,
     };
   }
-}
 
-final Future<Database> database = openDatabase(
-  "tasks.db",
-  onCreate: (db, version) {
-    return db.execute(
-      'CREATE TABLE tasks('
-          'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
-          'isHomework INTEGER,'
-          'totalPages INTEGER,'
-          'name TEXT,'
-          'detail TEXT,'
-          'start TEXT,'
-          'end TEXT,'
-          'color INTEGER'
-      ')',
-    );
-  },
-  version: 3,
-);
-
-Future<void> insertTask(Task task) async {
-  final Database db = await database;
-  if (task.id == null) {
-    await db.insert(
+  Future<void> insert() async {
+    final Database db = await database;
+    if (id == null) {
+      await db.insert(
+        'tasks',
+        toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } else {
+      await db.update(
+        'tasks',
+        toMap(),
+        where: "id = ?",
+        whereArgs: [id],
+      );
+    }
+  }
+  Future<void> delete() async {
+    final Database db = await database;
+    await db.delete(
       'tasks',
-      task.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  } else {
-    await db.update(
-      'tasks',
-      task.toMap(),
       where: "id = ?",
-      whereArgs: [task.id],
+      whereArgs: [id],
     );
   }
-}
-
-Future<void> deleteTask(Task task) async {
-  final Database db = await database;
-  await db.delete(
-    'tasks',
-    where: "id = ?",
-    whereArgs: [task.id],
-  );
 }
 
 Future<List<Task>> getTasks(String where, List? whereArgs, [String? orderBy]) async {

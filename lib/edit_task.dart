@@ -276,7 +276,7 @@ class EditPageState extends State<EditPage> {
                               );
                               return;
                             }
-                            insertTask(Task(
+                            Task(
                               id: widget.editTask?.id,
                               isHomework: _isTaskHomework,
                               totalPages: _taskTotalPages,
@@ -285,7 +285,7 @@ class EditPageState extends State<EditPage> {
                               start: _taskDateRange!.start,
                               end: _taskDateRange!.end,
                               color: _taskColor,
-                            ));
+                            ).insert();
                             Navigator.popUntil(
                               context,
                               (Route<dynamic> route) => route.isFirst,
