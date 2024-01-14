@@ -21,6 +21,8 @@ class EditPageState extends State<EditPage> {
   late String _taskName = widget.editTask?.name ?? "";
   late String _taskDetail = widget.editTask?.detail ?? "";
   late Color _taskColor = widget.editTask?.color ?? withNewHue(theme(context).primary, 0);
+  late bool _isTaskHomework = widget.editTask?.isHomework ?? false;
+  late int? _taskTotalPages = widget.editTask?.totalPages;
   bool isEdited = false;
 
   @override
@@ -91,8 +93,10 @@ class EditPageState extends State<EditPage> {
       );
     }
 
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
         if (isEdited) {
           confirmCancel(context);
         } else {
@@ -101,7 +105,6 @@ class EditPageState extends State<EditPage> {
             (Route<dynamic> route) => route.isFirst,
           );
         }
-        return Future.value(false);
       },
       child: Scaffold(
         appBar: AppBar(
@@ -150,6 +153,32 @@ class EditPageState extends State<EditPage> {
                       _taskDetail = value;
                     },
                   ),
+                  const CustomMargin(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("宿題モード"),
+                      Switch(
+                        value: _isTaskHomework,
+                        onChanged: (value) {
+                          isEdited = true;
+                          setState(() => _isTaskHomework = value);
+                        },
+                      ),
+                    ],
+                  ),
+                  if (_isTaskHomework)
+                    CustomTextField(
+                      initialValue: (_taskTotalPages ?? "").toString(),
+                      isNumber: true,
+                      borderColor: _taskColor,
+                      isUnderline: false,
+                      hintText: "合計ページ数",
+                      onChanged: (value) {
+                        isEdited = true;
+                        _taskTotalPages = int.tryParse(value);
+                      },
+                    ),
                   const CustomMargin(height: 10),
                   CustomElevatedButton(
                     label: _taskDateRange == null
@@ -249,6 +278,8 @@ class EditPageState extends State<EditPage> {
                             }
                             insertTask(Task(
                               id: widget.editTask?.id,
+                              isHomework: _isTaskHomework,
+                              totalPages: _taskTotalPages,
                               name: _taskName,
                               detail: _taskDetail,
                               start: _taskDateRange!.start,

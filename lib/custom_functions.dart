@@ -24,6 +24,8 @@ DateFormat formatterForSQL = DateFormat('yyyy-MM-dd');
 class Task {
   Task({
     this.id,
+    required this.isHomework,
+    this.totalPages,
     required this.name,
     required this.detail,
     required this.start,
@@ -32,6 +34,8 @@ class Task {
   });
 
   final int? id;
+  final bool isHomework;
+  final int? totalPages;
   final String name;
   final String detail;
   final DateTime start;
@@ -39,6 +43,8 @@ class Task {
   final Color color;
   Map<String, dynamic> toMap() {
     return {
+      'isHomework': isHomework ? 1 : 0,
+      'totalPages': totalPages,
       'name': name,
       'detail': detail,
       'start': formatterForSQL.format(start),
@@ -52,7 +58,16 @@ final Future<Database> database = openDatabase(
   "tasks.db",
   onCreate: (db, version) {
     return db.execute(
-      'CREATE TABLE tasks(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, detail TEXT, start TEXT, end TEXT, color INTEGER)',
+      'CREATE TABLE tasks('
+          'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
+          'isHomework INTEGER,'
+          'totalPages INTEGER,'
+          'name TEXT,'
+          'detail TEXT,'
+          'start TEXT,'
+          'end TEXT,'
+          'color INTEGER'
+      ')',
     );
   },
   version: 3,
@@ -96,6 +111,8 @@ Future<List<Task>> getTasks(String where, List? whereArgs, [String? orderBy]) as
   return List.generate(maps.length, (i) {
     return Task(
       id: maps[i]['id'],
+      isHomework: maps[i]['isHomework'] == 1,
+      totalPages: maps[i]['totalPages'],
       name: maps[i]['name'],
       detail: maps[i]['detail'],
       start: DateTime.parse(maps[i]['start']),

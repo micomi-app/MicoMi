@@ -421,7 +421,14 @@ class MainPageState extends State<MainPage> {
                           color: theme(context).onSecondary.withOpacity(0.7),
                         ),
                       ),
-                    const CustomMargin(height: 15),
+                    if (task.isHomework)
+                      Text(
+                        "約${(task.totalPages! / task.end.difference(task.start).inDays).round()}ページ / 日",
+                        style: TextStyle(
+                          color: theme(context).onSecondary.withOpacity(0.7),
+                        ),
+                      ),
+                      const CustomMargin(height: 15),
                   ],
                 ),
               ),

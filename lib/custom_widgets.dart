@@ -14,9 +14,10 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.initialValue,
     this.borderColor,
+    this.isNumber,
   });
 
-  final String? initialValue;
+  final dynamic initialValue;
   final String hintText;
   final TextStyle? textStyle;
   final bool? isMultiline;
@@ -26,6 +27,7 @@ class CustomTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final String? Function(String?)? validator;
   final Color? borderColor;
+  final bool? isNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class CustomTextField extends StatelessWidget {
         initialValue: initialValue,
         textAlign: isTextAlignCenter == true ? TextAlign.center : TextAlign.start,
         autofocus: autoFocus == true,
-        keyboardType: isMultiline == true ? TextInputType.multiline : null,
+        keyboardType: isMultiline == true ? TextInputType.multiline : isNumber == true ? TextInputType.number : TextInputType.text,
         maxLines: isMultiline == true ? null : 1,
         style: textStyle,
         onChanged: onChanged,
