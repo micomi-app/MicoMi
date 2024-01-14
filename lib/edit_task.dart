@@ -81,6 +81,9 @@ class EditPageState extends State<EditPage> {
                 },
               ),
               TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: theme(context).onBackground,
+                ),
                 child: const Text("やめない"),
                 onPressed: () {
                   Vibration.vibrate(duration: 10);

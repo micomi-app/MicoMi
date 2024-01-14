@@ -13,10 +13,10 @@ class CustomMaterialApp extends StatelessWidget {
       title: title,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xff8daeb8),
-          primary: const Color(0xff8daeb8),
+          seedColor: const Color(0xffb8a78e),
+          primary: const Color(0xffb8a78e),
           onPrimary: Colors.white,
-          secondary: const Color(0xffc5e0e8),
+          secondary: const Color(0xffb8a78e),
           onSecondary: Colors.black,
           tertiary: Color.lerp(Colors.black, Colors.white, 0.9),
           onTertiary: Colors.black,
@@ -34,12 +34,12 @@ class CustomMaterialApp extends StatelessWidget {
         fontFamily: "Noto Sans JP",
       ),
       darkTheme: ThemeData(
-        primaryColor: const Color(0xff4e7682),
+        primaryColor: const Color(0xff826b4e),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xff4e7682),
-          primary: const Color(0xff4e7682),
+          seedColor: const Color(0xff826b4e),
+          primary: const Color(0xff826b4e),
           onPrimary: Colors.white,
-          secondary: Color.lerp(const Color(0xff4e7682), Colors.black, 0.5)!,
+          secondary: Color.lerp(const Color(0xff826b4e), Colors.black, 0.5)!,
           onSecondary: Colors.white,
           tertiary: Color.lerp(Colors.white, Colors.black, 0.9),
           onTertiary: Colors.white,
