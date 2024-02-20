@@ -8,19 +8,11 @@ on:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, '[release]')"
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
-      - name: Check commit message
-        run: |
-          if [[ $(git log -1 --pretty=%B) == *"[release]"* ]]; then
-            echo "Commit message contains [release]. Proceeding with the workflow."
-          else
-            echo "Commit message does not contain [release]. Skipping the workflow."
-            exit 0
-          fi
 
       - name: Set up Java
         uses: actions/setup-java@v2
