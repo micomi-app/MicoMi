@@ -482,8 +482,9 @@ class MainPageState extends State<MainPage> {
                         );
                       }),
                     ).then((value) {
-                      _selectedTask = null;
-                      setState(() {});
+                      setState(() {
+                        _selectedTask = null;
+                      });
                     });
                   },
                   icon: const Icon(Icons.edit),
