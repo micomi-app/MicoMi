@@ -201,6 +201,154 @@ class MainPageState extends State<MainPage> {
         ),
       ),
 
+      // *****************************予定表*****************************
+      SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const CustomMargin(height: 20),
+            // カレンダー
+            TableCalendar(
+              calendarBuilders: CalendarBuilders(
+                selectedBuilder: (context, day, focusedDay) {
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: theme(context).primary,
+                      ),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: theme(context).onPrimary,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                rangeStartBuilder: (context, day, focusedDay) {
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: toSecondaryColorSL(context, _selectedTask?.color),
+                      ),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          color: theme(context).onSecondary,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                rangeEndBuilder: (context, day, focusedDay) {
+                  return Center(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: toSecondaryColorSL(context, _selectedTask?.color),
+                      ),
+                      child: Text(
+                        day.day.toString(),
+                        style: TextStyle(
+                          color: theme(context).onSecondary,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              calendarStyle: CalendarStyle(
+                // ここに書いてもマーカーデザイン実装できるけど、
+                // フェードアニメーションがついて違和感ある感じになってしまうので
+                // 今回はCalendarBuildersで実装
+                todayDecoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: theme(context).primary,
+                    width: 1,
+                  ),
+                ),
+                todayTextStyle: TextStyle(
+                  color: theme(context).primary,
+                ),
+                rangeHighlightColor:
+                toSecondaryColorSL(context, _selectedTask?.color) ?? theme(context).secondary,
+              ),
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+                titleCentered: true,
+              ),
+              daysOfWeekHeight: 32,
+              firstDay: DateTime.utc(2010, 1, 1),
+              lastDay: DateTime.utc(9999, 12, 31),
+              focusedDay: _focusedDay,
+              rangeStartDay: _selectedTask?.start,
+              rangeEndDay: _selectedTask?.end,
+              locale: Localizations.localeOf(context).toString(),
+              selectedDayPredicate: (day) {
+                return isSameDay(_selectedDay, day);
+              },
+              onPageChanged: (focusedDay) {
+                _focusedDay = focusedDay;
+              },
+              onDaySelected: (selectedDay, focusedDay) {
+                Vibration.vibrate(duration: 10);
+                setState(() {
+                  _selectedDay = selectedDay;
+                  _focusedDay = focusedDay;
+                });
+              },
+            ),
+
+            FutureBuilder(
+              builder: (context, AsyncSnapshot<List<Task>> snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    children: [
+                      for (final task in snapshot.data!)
+                        taskCard(
+                          task: task,
+                          onTap: () {
+                            Vibration.vibrate(duration: 10);
+                            if (_selectedTask?.id != task.id) {
+                              setState(() {
+                                _selectedTask = task;
+                              });
+                            } else {
+                              setState(() {
+                                _selectedTask = null;
+                              });
+                            }
+                          },
+                        ),
+                      const CustomMargin(height: 170),
+                    ],
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+              future: getTasks(
+                "start <= ? AND end >= ? AND isHomework = 1",
+                [formatterForSQL.format(_selectedDay), formatterForSQL.format(_selectedDay)],
+              ),
+            ),
+          ],
+        ),
+      ),
+
       // *****************************タスク一覧*****************************
       FutureBuilder(
         future: getTasks("1", [], _orderBy),
@@ -364,6 +512,12 @@ class MainPageState extends State<MainPage> {
             label: "カレンダー",
             tooltip: "カレンダー",
             selectedIcon: Icon(Icons.calendar_month),
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.edit_calendar),
+            label: "予定表",
+            tooltip: "予定表",
+            selectedIcon: Icon(Icons.edit_calendar),
           ),
           NavigationDestination(
             icon: Icon(Icons.checklist),
