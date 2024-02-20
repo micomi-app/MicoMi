@@ -23,6 +23,7 @@ class EditPageState extends State<EditPage> {
   late Color _taskColor = widget.editTask?.color ?? withNewHue(theme(context).primary, 0);
   late bool _isTaskHomework = widget.editTask?.isHomework ?? false;
   late int? _taskTotalPages = widget.editTask?.totalPages;
+  late double? _taskDifficulty = widget.editTask?.difficulty?.toDouble();
   bool isEdited = false;
 
   @override
@@ -171,16 +172,43 @@ class EditPageState extends State<EditPage> {
                     ],
                   ),
                   if (_isTaskHomework)
-                    CustomTextField(
-                      initialValue: (_taskTotalPages ?? "").toString(),
-                      isNumber: true,
-                      borderColor: _taskColor,
-                      isUnderline: false,
-                      hintText: "合計ページ数",
-                      onChanged: (value) {
-                        isEdited = true;
-                        _taskTotalPages = int.tryParse(value);
-                      },
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("大変度"),
+                            Slider(
+                              value: _taskDifficulty ?? 5.0,
+                              label: (_taskDifficulty ?? 5.0).round().toString(),
+                              min: 0,
+                              max: 10,
+                              divisions: 10,
+                              onChanged: (value) {
+                                isEdited = true;
+                                setState(() => _taskDifficulty = value);
+                              },
+                            ),
+                          ],
+                        ),
+                        CustomTextField(
+                          initialValue: (_taskTotalPages ?? "").toString(),
+                          isNumber: true,
+                          borderColor: _taskColor,
+                          isUnderline: false,
+                          hintText: "合計ページ数",
+                          onChanged: (value) {
+                            isEdited = true;
+                            _taskTotalPages = int.tryParse(value);
+                          },
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return "合計ページ数を入力してください。";
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
                   const CustomMargin(height: 10),
                   CustomElevatedButton(
@@ -282,6 +310,7 @@ class EditPageState extends State<EditPage> {
                             Task(
                               id: widget.editTask?.id,
                               isHomework: _isTaskHomework,
+                              difficulty: _taskDifficulty?.round() ?? (_isTaskHomework ? 5 : null),
                               totalPages: _taskTotalPages,
                               name: _taskName,
                               detail: _taskDetail,

@@ -576,13 +576,23 @@ class MainPageState extends State<MainPage> {
                         ),
                       ),
                     if (task.isHomework)
-                      Text(
-                        "約${(task.totalPages! / task.end.difference(task.start).inDays).round()}ページ / 日",
-                        style: TextStyle(
-                          color: theme(context).onSecondary.withOpacity(0.7),
-                        ),
+                      Column(
+                        children: [
+                          Text(
+                            "約${(task.totalPages! / task.end.difference(task.start).inDays).round()}ページ / 日",
+                            style: TextStyle(
+                              color: theme(context).onSecondary.withOpacity(0.7),
+                            ),
+                          ),
+                          Text(
+                            "大変度: ${task.difficulty}",
+                            style: TextStyle(
+                              color: theme(context).onSecondary.withOpacity(0.7),
+                            ),
+                          ),
+                          const CustomMargin(height: 15),
+                        ],
                       ),
-                      const CustomMargin(height: 15),
                   ],
                 ),
               ),

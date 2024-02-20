@@ -29,6 +29,7 @@ final Future<Database> database = openDatabase(
       'CREATE TABLE tasks('
           'id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,'
           'isHomework INTEGER,'
+          'difficulty INTEGER,'
           'totalPages INTEGER,'
           'name TEXT,'
           'detail TEXT,'
@@ -45,6 +46,7 @@ class Task {
   Task({
     this.id,
     required this.isHomework,
+    this.difficulty,
     this.totalPages,
     required this.name,
     required this.detail,
@@ -55,6 +57,7 @@ class Task {
 
   final int? id;
   final bool isHomework;
+  final int? difficulty;
   final int? totalPages;
   final String name;
   final String detail;
@@ -64,6 +67,7 @@ class Task {
   Map<String, dynamic> toMap() {
     return {
       'isHomework': isHomework ? 1 : 0,
+      'difficulty': difficulty,
       'totalPages': totalPages,
       'name': name,
       'detail': detail,
@@ -112,6 +116,7 @@ Future<List<Task>> getTasks(String where, List? whereArgs, [String? orderBy]) as
     return Task(
       id: maps[i]['id'],
       isHomework: maps[i]['isHomework'] == 1,
+      difficulty: maps[i]['difficulty'],
       totalPages: maps[i]['totalPages'],
       name: maps[i]['name'],
       detail: maps[i]['detail'],
